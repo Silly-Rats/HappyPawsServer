@@ -9,11 +9,14 @@ public class Worker {
 	@Id
 	@Column(name = "worker_id")
 	private Integer workerId;
+
 	@Column(name = "rating_sum")
 	private Integer ratingSum;
+
 	@Column(name = "reviews_num")
 	private Integer reviewsNum;
 	private String description;
+
 	@OneToOne
 	@JoinColumn(name = "worker_id", referencedColumnName = "user_id")
 	private User user;

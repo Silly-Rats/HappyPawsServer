@@ -11,15 +11,19 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "user_id")
 	private Integer id;
+
 	@Column(name = "first_name")
 	private String firstName;
+
 	@Column(name = "last_name")
 	private String lastName;
 	private LocalDate dob;
+
 	@Column(name = "phone_num")
 	private String phoneNum;
 	private String email;
 	private Byte type;
+
 	@Column(name = "image_name")
 	private String imageName;
 	private String password;
