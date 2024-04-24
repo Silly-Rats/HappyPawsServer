@@ -1,6 +1,7 @@
 package org.silly.rats.shop.categories;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,6 +23,7 @@ public class Category {
 	private String name;
 
 	@Column(name = "image_name")
+	@JsonIgnore
 	private String imageName;
 
 	@ManyToOne
@@ -34,13 +36,4 @@ public class Category {
 
 	@OneToMany(mappedBy = "category")
 	private List<Attribute> attributes;
-
-	public Category(String name, String imageName, Category parent, List<Category> subCategories, List<Attribute> attributes) {
-		this.id = null;
-		this.name = name;
-		this.imageName = imageName;
-		this.parent = parent;
-		this.subCategories = subCategories;
-		this.attributes = attributes;
-	}
 }
