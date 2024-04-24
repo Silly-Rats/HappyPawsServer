@@ -1,8 +1,18 @@
 package org.silly.rats.shop.attribute;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.silly.rats.shop.attribute.value.AttributeValue;
 import org.silly.rats.shop.categories.Category;
 
+import java.util.List;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "attribute")
 public class Attribute {
@@ -12,23 +22,11 @@ public class Attribute {
 	private Integer id;
 	private String name;
 
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "category")
 	private Category category;
 
-	public Attribute() {}
-
-	public Attribute(Integer id, String name, Category category) {
-		this.id = id;
-		this.name = name;
-		this.category = category;
-	}
-
-	public Integer getId() {
-		return id;
-	}
-
-	public String getName() {
-		return name;
-	}
+	@OneToMany(mappedBy = "attribute")
+	List<AttributeValue> values;
 }

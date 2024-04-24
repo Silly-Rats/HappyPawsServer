@@ -1,12 +1,28 @@
 package org.silly.rats.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.silly.rats.user.type.AccountType;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "user")
-public class User {
+public class User
+	implements UserDetails {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "user_id")
@@ -17,101 +33,66 @@ public class User {
 
 	@Column(name = "last_name")
 	private String lastName;
-	private LocalDate dob;
+	private Date dob;
 
 	@Column(name = "phone_num")
 	private String phoneNum;
 	private String email;
-	private Byte type;
+
+	@ManyToOne
+	@JoinColumn(name = "type")
+	private AccountType type;
+
+	@OneToOne
+	@JoinColumn(name = "user_id", referencedColumnName = "worker_id")
+	private Worker workerDetails;
 
 	@Column(name = "image_name")
+	@JsonIgnore
 	private String imageName;
+
+
+
+	@JsonIgnore
 	private String password;
 
-	public User() {
+	@Override
+	@JsonIgnore
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return List.of(new SimpleGrantedAuthority(type.getName()));
 	}
 
-	public User(String firstName, String lastName, LocalDate dob, String phoneNum, String email, Byte type, String imageName, String password) {
-		this(-1, firstName, lastName, dob, phoneNum, email, type, imageName, password);
-	}
-
-	public User(Integer id, String firstName, String lastName, LocalDate dob, String phoneNum, String email, Byte type, String imageName, String password) {
-		this.id = id;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.dob = dob;
-		this.phoneNum = phoneNum;
-		this.email = email;
-		this.type = type;
-		this.imageName = imageName;
-		this.password = password;
-	}
-
-	public Integer getId() {
-		return id;
-	}
-
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public void setFirstName(String first_name) {
-		this.firstName = first_name;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String last_name) {
-		this.lastName = last_name;
-	}
-
-	public LocalDate getDob() {
-		return dob;
-	}
-
-	public void setDob(LocalDate dob) {
-		this.dob = dob;
-	}
-
-	public String getPhoneNum() {
-		return phoneNum;
-	}
-
-	public void setPhoneNum(String phone_num) {
-		this.phoneNum = phone_num;
-	}
-
-	public String getEmail() {
+	@Override
+	@JsonIgnore
+	public String getUsername() {
 		return email;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	@Override
+	@JsonIgnore
+	public boolean isAccountNonExpired() {
+		return true;
 	}
 
-	public Byte getType() {
-		return type;
+	@Override
+	@JsonIgnore
+	public boolean isAccountNonLocked() {
+		return true;
 	}
 
-	public void setType(Byte type) {
-		this.type = type;
+	@Override
+	@JsonIgnore
+	public boolean isCredentialsNonExpired() {
+		return true;
 	}
 
-	public String getImageName() {
-		return imageName;
+	@Override
+	@JsonIgnore
+	public boolean isEnabled() {
+		return true;
 	}
 
-	public void setImageName(String image_name) {
-		this.imageName = image_name;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
+	public String getType() {
+		return type.getName();
 	}
 }

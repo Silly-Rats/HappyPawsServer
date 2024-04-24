@@ -1,17 +1,19 @@
 package org.silly.rats.user;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.silly.rats.user.type.AccountTypeRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 	private final UserRepository userRepository;
+	private final AccountTypeRepository accountTypeRepository;
 
-	@Autowired
-	public UserService(UserRepository userRepository) {
-		this.userRepository = userRepository;
+	public List<User> getAllUsersByType(String type) {
+		return accountTypeRepository.findByName(type).getUsers();
 	}
 
 	public List<User> getUsers() {

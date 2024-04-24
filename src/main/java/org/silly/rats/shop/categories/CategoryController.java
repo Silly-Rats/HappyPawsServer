@@ -1,22 +1,39 @@
 package org.silly.rats.shop.categories;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import lombok.RequiredArgsConstructor;
+import org.silly.rats.shop.attribute.Attribute;
+import org.silly.rats.shop.attribute.AttributeService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/category")
+@RequestMapping("api/category")
+@RequiredArgsConstructor
 public class CategoryController {
-	private CategoryService categoryService;
+	private final CategoryService categoryService;
+	private final AttributeService attributeService;
 
-	@Autowired
-	public CategoryController(CategoryService categoryService) {
-		this.categoryService = categoryService;
+	@GetMapping(path = "/{category}")
+	public Category getCategory(@PathVariable Integer category) {
+		return categoryService.setCurrentCategory(category);
 	}
 
-	@GetMapping
-	public List<Category> getAllSubCategories(@RequestParam(required = false) Integer parent) {
-		return categoryService.getAllSubCategories(parent);
+	@GetMapping(path = "/{category}/subCategories")
+	public List<Category> getSubCategories(@PathVariable Integer category) {
+		return categoryService.getSubCategories(category);
+	}
+
+	@GetMapping(path = "/{category}/attributes")
+	public List<Attribute> getCategoryAttributes(@PathVariable Integer category) {
+		Category currentCategory = categoryService.getCurrentCategory();
+		if (currentCategory != null &&  currentCategory.getId().equals(category)) {
+			return currentCategory.getAttributes();
+		}
+
+		return attributeService.getAttributesByCategory(category);
 	}
 }
