@@ -1,3 +1,3 @@
 # HappyPawsServer
 To launch the server run Server.java file. 
-To access the server use url localhost/.
+To access the server use url localhost:8080/api/.
