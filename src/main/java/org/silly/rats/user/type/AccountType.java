@@ -1,7 +1,16 @@
 package org.silly.rats.user.type;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.silly.rats.user.User;
 
+import java.util.List;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "account_type")
 public class AccountType {
@@ -11,19 +20,6 @@ public class AccountType {
 	private Byte id;
 	private String name;
 
-	public AccountType() {
-	}
-
-	public AccountType(Byte id, String name) {
-		this.id = id;
-		this.name = name;
-	}
-
-	public Byte getId() {
-		return id;
-	}
-
-	public String getName() {
-		return name;
-	}
+	@OneToMany(mappedBy = "type")
+	private List<User> users;
 }

@@ -1,7 +1,6 @@
 package org.silly.rats.user;
 
-import org.silly.rats.user.worker.Worker;
-import org.silly.rats.user.worker.WorkerService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,24 +10,13 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/users")
+@RequestMapping(path = "api/user")
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class UserController {
 	private final UserService userService;
-	private final WorkerService workerService;
-
-	@Autowired
-	public UserController(UserService userService, WorkerService workerService) {
-		this.userService = userService;
-		this.workerService = workerService;
-	}
-
-	@GetMapping
-	public List<User> getUsers() {
-		return userService.getUsers();
-	}
 
 	@GetMapping(path = "/{type}")
-	public List<Worker> getWorkersByType(@PathVariable String type) {
-		return workerService.getWorkersByType(type);
+	public List<User> getUsersByType(@PathVariable String type) {
+		return userService.getAllUsersByType(type);
 	}
 }

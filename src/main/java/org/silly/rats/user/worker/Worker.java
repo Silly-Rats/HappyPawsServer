@@ -1,61 +1,35 @@
 package org.silly.rats.user.worker;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.silly.rats.user.User;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "worker_details")
 public class Worker {
 	@Id
 	@Column(name = "worker_id")
+	@JsonIgnore
 	private Integer workerId;
+
 	@Column(name = "rating_sum")
-	private Integer ratingSum;
+	private Integer ratingSum = 0;
+
 	@Column(name = "reviews_num")
-	private Integer reviewsNum;
+	private Integer reviewsNum = 0;
 	private String description;
+
 	@OneToOne
 	@JoinColumn(name = "worker_id", referencedColumnName = "user_id")
+	@JsonBackReference
 	private User user;
-
-	public Worker() {}
-
-	public Worker(Integer workerId, Integer ratingSum, Integer reviewsNum, String description, User user) {
-		this.workerId = workerId;
-		this.ratingSum = ratingSum;
-		this.reviewsNum = reviewsNum;
-		this.description = description;
-		this.user = user;
-	}
-
-	public Worker(Integer ratingSum, Integer reviewsNum, String description, User user) {
-		this.ratingSum = ratingSum;
-		this.reviewsNum = reviewsNum;
-		this.description = description;
-		this.user = user;
-	}
-
-	public Integer getWorkerId() {
-		return workerId;
-	}
-
-	public Integer getRatingSum() {
-		return ratingSum;
-	}
-
-	public Integer getReviewsNum() {
-		return reviewsNum;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public User getUser() {
-		return user;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
 }
