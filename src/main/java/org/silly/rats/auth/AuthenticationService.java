@@ -4,9 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.silly.rats.config.JwtService;
 import org.silly.rats.user.User;
 import org.silly.rats.user.UserRepository;
-import org.silly.rats.user.Worker;
+import org.silly.rats.user.worker.Worker;
 import org.silly.rats.user.type.AccountType;
 import org.silly.rats.user.type.AccountTypeRepository;
+import org.silly.rats.user.worker.WorkerRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthenticationService {
 	private final UserRepository userRepository;
+	private final WorkerRepository workerRepository;
 	private final AccountTypeRepository accountTypeRepository;
 	private final JwtService jwtService;
 	private final AuthenticationManager authenticationManager;
@@ -29,18 +31,24 @@ public class AuthenticationService {
 		}
 
 		AccountType accountType = accountTypeRepository.findByName(request.getType());
-		User user = User.builder()
-				.firstName(request.getFirstName())
-				.lastName(request.getLastName())
-				.email(request.getEmail())
-				.phoneNum(request.getPhoneNum())
-				.dob(request.getDob())
-				.type(accountType)
-				.workerDetails(accountType.getId().equals((byte) 1) ? null : new Worker())
-				.password(passwordEncoder.encode(request.getPassword()))
-				.build();
+		if (accountType == null) {
+			throw new AuthenticationServiceException("There is no such account type");
+		}
+		User user = new User();
+		user.setFirstName(request.getFirstName());
+		user.setLastName(request.getLastName());
+		user.setEmail(request.getEmail());
+		user.setPhoneNum(request.getPhoneNum());
+		user.setDob(request.getDob());
+		user.setType(accountType);
+		user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-		userRepository.save(user);
+		User saved = userRepository.save(user);
+		Worker worker = new Worker();
+		worker.setWorkerId(saved.getId());
+		worker.setDescription(request.getDescription());
+		workerRepository.save(worker);
+
 		String jwtToken = jwtService.generateToken(user);
 		return AuthenticationResponse.builder()
 				.token(jwtToken)

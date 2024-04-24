@@ -4,8 +4,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
@@ -16,6 +14,17 @@ public class CategoryService {
 	public Category setCurrentCategory(Integer id) {
 		if (currentCategory == null) {
 			currentCategory = categoryRepository.findById(id).orElse(null);
+			return currentCategory;
+		}
+
+		if (id.equals(currentCategory.getId())) {
+			return currentCategory;
+		}
+
+		if (id.equals(0)) {
+			currentCategory = new Category();
+			currentCategory.setSubCategories(
+					categoryRepository.findAllBasic());
 			return currentCategory;
 		}
 
@@ -30,13 +39,6 @@ public class CategoryService {
 			currentCategory = categoryRepository.getReferenceById(id);
 		}
 		return currentCategory;
-	}
-
-	public List<Category> getSubCategories(Integer parent) {
-		if (currentCategory == null || !currentCategory.getId().equals(parent)) {
-			return categoryRepository.findAllSubCategories(parent == 0 ? null : parent);
-		}
-		return currentCategory.getSubCategories();
 	}
 
 	private Category lookCategoryDown(Category category, Integer id) {

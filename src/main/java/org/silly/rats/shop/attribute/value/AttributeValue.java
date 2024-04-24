@@ -1,5 +1,6 @@
 package org.silly.rats.shop.attribute.value;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -21,6 +22,7 @@ public class AttributeValue {
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "attribute")
+	@JsonBackReference
 	private Attribute attribute;
 
 	private String value;

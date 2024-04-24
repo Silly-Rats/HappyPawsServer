@@ -1,12 +1,16 @@
-package org.silly.rats.user;
+package org.silly.rats.user.worker;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.silly.rats.user.User;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -14,14 +18,14 @@ import lombok.NoArgsConstructor;
 public class Worker {
 	@Id
 	@Column(name = "worker_id")
-	@JsonBackReference
+	@JsonIgnore
 	private Integer workerId;
 
 	@Column(name = "rating_sum")
-	private Integer ratingSum;
+	private Integer ratingSum = 0;
 
 	@Column(name = "reviews_num")
-	private Integer reviewsNum;
+	private Integer reviewsNum = 0;
 	private String description;
 
 	@OneToOne

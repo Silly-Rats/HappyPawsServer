@@ -19,4 +19,5 @@ public class RegisterRequest {
 	private Date dob;
 	private String type;
 	private String password;
+	private String description;
 }

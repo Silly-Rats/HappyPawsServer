@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.silly.rats.user.type.AccountType;
+import org.silly.rats.user.worker.Worker;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -51,7 +52,9 @@ public class User
 	@JsonIgnore
 	private String imageName;
 
-
+	@Column(name = "modify_date")
+	@JsonIgnore
+	private Date modifyDate = new Date();
 
 	@JsonIgnore
 	private String password;

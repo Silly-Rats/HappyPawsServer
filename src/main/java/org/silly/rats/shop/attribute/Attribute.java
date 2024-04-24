@@ -1,6 +1,6 @@
 package org.silly.rats.shop.attribute;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,9 +22,9 @@ public class Attribute {
 	private Integer id;
 	private String name;
 
-	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "category")
+	@JsonBackReference
 	private Category category;
 
 	@OneToMany(mappedBy = "attribute")

@@ -1,6 +1,6 @@
 package org.silly.rats.shop.categories;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,9 +24,9 @@ public class Category {
 	@Column(name = "image_name")
 	private String imageName;
 
-	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "sub_category")
+	@JsonBackReference
 	private Category parent;
 
 	@OneToMany(mappedBy = "parent")
