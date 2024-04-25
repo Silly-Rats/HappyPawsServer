@@ -27,7 +27,8 @@ public class SecurityConfiguration {
 						.requestMatchers("api/auth/**",
 								"api/category/**",
 								"api/user/**",
-								"/api/item/**")
+								"/api/item/**",
+								"/api/breed")
 						.permitAll()
 						.anyRequest().authenticated())
 				.sessionManagement(session -> session

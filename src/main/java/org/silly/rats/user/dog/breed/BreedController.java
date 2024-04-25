@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/breed")
+@RequestMapping(path = "api/breed")
 @RequiredArgsConstructor
 public class BreedController {
 	private final BreedService breedService;
