@@ -51,6 +51,7 @@ public class AuthenticationService {
 
 		String jwtToken = jwtService.generateToken(user);
 		return AuthenticationResponse.builder()
+				.id(user.getId())
 				.token(jwtToken)
 				.build();
 	}
@@ -64,6 +65,7 @@ public class AuthenticationService {
 				.orElseThrow(() -> new UsernameNotFoundException("Email is not found"));
 		String jwtToken = jwtService.generateToken(user);
 		return AuthenticationResponse.builder()
+				.id(user.getId())
 				.token(jwtToken)
 				.build();
 	}

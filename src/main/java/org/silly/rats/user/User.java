@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.silly.rats.user.dog.Dog;
 import org.silly.rats.user.type.AccountType;
 import org.silly.rats.user.worker.Worker;
 import org.springframework.security.core.GrantedAuthority;
@@ -55,6 +56,9 @@ public class User
 	@Column(name = "modify_date")
 	@JsonIgnore
 	private Date modifyDate = new Date();
+
+	@OneToMany(mappedBy = "user")
+	private List<Dog> dogs;
 
 	@JsonIgnore
 	private String password;
