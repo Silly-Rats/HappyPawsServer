@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.silly.rats.shop.attribute.Attribute;
-import org.silly.rats.shop.item.ItemAttribute;
+import org.silly.rats.shop.item.details.ItemAttribute;
 
 import java.util.List;
 

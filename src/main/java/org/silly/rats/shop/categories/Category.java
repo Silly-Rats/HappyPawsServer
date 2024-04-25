@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.silly.rats.shop.attribute.Attribute;
+import org.silly.rats.shop.item.Item;
 
 import java.util.List;
 
@@ -36,4 +37,8 @@ public class Category {
 
 	@OneToMany(mappedBy = "category")
 	private List<Attribute> attributes;
+
+	@OneToMany(mappedBy = "category")
+	@JsonIgnore
+	private List<Item> items;
 }
