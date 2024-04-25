@@ -1,17 +1,19 @@
 package org.silly.rats.shop.categories;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.silly.rats.shop.item.Item;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
 	private final CategoryRepository categoryRepository;
-	@Getter
 	private Category currentCategory = null;
+	private List<Item> items;
 
-	public Category setCurrentCategory(Integer id) {
+	public Category getCategory(Integer id) {
 		if (currentCategory == null) {
 			currentCategory = categoryRepository.findById(id).orElse(null);
 			return currentCategory;
