@@ -7,11 +7,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.silly.rats.reserve.Reserve;
 import org.silly.rats.user.User;
 import org.silly.rats.user.dog.breed.Breed;
 import org.silly.rats.user.dog.breed.OtherBreed;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Builder
@@ -42,6 +44,10 @@ public class Dog {
 	@JoinColumn(name = "user_id")
 	@JsonBackReference
 	private User user;
+
+	@OneToMany(mappedBy = "dog")
+	@JsonBackReference
+	private List<Reserve> reserves;
 
 	public Breed getBreed() {
 		if (breed == null) {

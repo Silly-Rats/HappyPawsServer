@@ -18,17 +18,18 @@ public class SecurityConfiguration {
 	private final JwtAuthenticationFilter jwtAuthFilter;
 	private final AuthenticationProvider authenticationProvider;
 
-
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http)
 			throws Exception {
 		http.csrf(AbstractHttpConfigurer::disable)
 				.authorizeHttpRequests((auth) -> auth
-						.requestMatchers("api/auth/**",
-								"api/category/**",
+						.requestMatchers("api/auth/register",
+								"api/auth/authenticate",
 								"api/user/**",
-								"/api/item/**",
-								"/api/breed")
+								"/api/dog/breeds",
+								"api/category/*",
+								"/api/item/*",
+								"api/reserve/trainer/free/**")
 						.permitAll()
 						.anyRequest().authenticated())
 				.sessionManagement(session -> session

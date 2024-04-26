@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.silly.rats.reserve.details.TrainingDetails;
 import org.silly.rats.user.dog.Dog;
 import org.silly.rats.user.type.AccountType;
 import org.silly.rats.user.worker.Worker;
@@ -46,7 +47,7 @@ public class User
 	private AccountType type;
 
 	@OneToOne
-	@JoinColumn(name = "user_id", referencedColumnName = "worker_id")
+	@JoinColumn(name = "user_id")
 	private Worker workerDetails;
 
 	@Column(name = "image_name")
@@ -59,6 +60,10 @@ public class User
 
 	@OneToMany(mappedBy = "user")
 	private List<Dog> dogs;
+
+	@OneToMany(mappedBy = "worker")
+	@JsonIgnore
+	private List<TrainingDetails> trainings;
 
 	@JsonIgnore
 	private String password;
