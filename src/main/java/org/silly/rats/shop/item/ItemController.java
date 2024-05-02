@@ -15,7 +15,7 @@ public class ItemController {
 	private final ItemService itemService;
 
 	@GetMapping(path = "/{category}")
-	public List<Item> getItemsByCategory(@PathVariable("category") Integer category) {
+	public List<Item> getItemsByCategory(@PathVariable(value = "category", required = false) Integer category) {
 		return itemService.getCategoryItem(category);
 	}
 }

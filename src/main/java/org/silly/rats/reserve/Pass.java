@@ -30,7 +30,7 @@ public class Pass {
 	private User trainer;
 
 	private Byte used;
-	private Byte payed;
+	private Boolean payed;
 
 	public WorkerInfo getTrainer() {
 		return new WorkerInfo(trainer.getWorkerDetails());

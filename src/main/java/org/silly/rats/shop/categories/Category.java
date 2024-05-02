@@ -38,6 +38,7 @@ public class Category {
 	private List<Category> subCategories;
 
 	@OneToMany(mappedBy = "category")
+	@JsonIgnore
 	private List<Attribute> attributes;
 
 	@OneToMany(mappedBy = "category")

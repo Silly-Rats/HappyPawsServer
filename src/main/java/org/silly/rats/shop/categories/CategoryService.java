@@ -1,7 +1,11 @@
 package org.silly.rats.shop.categories;
 
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
+import org.silly.rats.shop.attribute.Attribute;
+import org.silly.rats.shop.attribute.AttributeRepository;
 import org.silly.rats.shop.item.Item;
+import org.silly.rats.shop.item.ItemRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,8 +14,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CategoryService {
 	private final CategoryRepository categoryRepository;
+	private final AttributeRepository attributeRepository;
 	private Category currentCategory = null;
-	private List<Item> items;
 
 	public Category getCategory(Integer id) {
 		if (currentCategory == null) {
@@ -41,6 +45,14 @@ public class CategoryService {
 			currentCategory = categoryRepository.getReferenceById(id);
 		}
 		return currentCategory;
+	}
+
+	public List<Attribute> getAttributes(Integer category) {
+		if (currentCategory == null || !currentCategory.getId().equals(category) ||
+				!Hibernate.isInitialized(currentCategory.getAttributes())) {
+			return attributeRepository.findByCategoryId(category);
+		}
+		return currentCategory.getAttributes();
 	}
 
 	private Category lookCategoryDown(Category category, Integer id) {
