@@ -30,6 +30,10 @@ public class AuthenticationService {
 			throw new AuthenticationServiceException("Email already used");
 		}
 
+		if (userRepository.findByPhoneNum(request.getPhoneNum()).isPresent()) {
+			throw new AuthenticationServiceException("Phone number already used");
+		}
+
 		AccountType accountType = accountTypeRepository.findByName(request.getType());
 		if (accountType == null) {
 			throw new AuthenticationServiceException("There is no such account type");

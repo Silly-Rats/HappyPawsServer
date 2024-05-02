@@ -1,6 +1,7 @@
 package org.silly.rats.user;
 
 import lombok.RequiredArgsConstructor;
+import org.silly.rats.config.JwtService;
 import org.silly.rats.user.type.AccountTypeRepository;
 import org.silly.rats.user.worker.WorkerInfo;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import java.util.List;
 public class UserService {
 	private final UserRepository userRepository;
 	private final AccountTypeRepository accountTypeRepository;
+	private final JwtService jwtService;
 
 	public List<WorkerInfo> getAllWorkersByType(String type) {
 		try {
@@ -24,7 +26,12 @@ public class UserService {
 		}
 	}
 
-	public List<User> getUsers() {
-		return userRepository.findAll();
+	public User getUserByToken(String token) {
+		if (token.startsWith("Bearer ")) {
+			token = token.substring(7);
+			Integer id = (Integer) jwtService.extractClaim(token, (c) -> c.get("id"));
+			return userRepository.findById(id).orElse(null);
+		}
+		return null;
 	}
 }
