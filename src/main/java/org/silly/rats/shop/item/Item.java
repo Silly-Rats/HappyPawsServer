@@ -1,14 +1,17 @@
 package org.silly.rats.shop.item;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.silly.rats.shop.categories.Category;
+import org.silly.rats.shop.item.details.ItemAttribute;
 import org.silly.rats.shop.item.details.ItemImage;
 import org.silly.rats.shop.item.details.ItemType;
+import org.silly.rats.shop.order.details.OrderItemDetails;
 
 import java.util.List;
 
@@ -36,4 +39,7 @@ public class Item {
 
 	@OneToMany(mappedBy = "item")
 	private List<ItemType> types;
+
+	@OneToMany(mappedBy = "itemType")
+	private List<ItemAttribute> attributes;
 }

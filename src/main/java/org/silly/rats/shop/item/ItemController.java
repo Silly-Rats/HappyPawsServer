@@ -1,10 +1,8 @@
 package org.silly.rats.shop.item;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.silly.rats.shop.categories.Category;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -14,8 +12,15 @@ import java.util.List;
 public class ItemController {
 	private final ItemService itemService;
 
-	@GetMapping(path = "/{category}")
-	public List<Item> getItemsByCategory(@PathVariable(value = "category", required = false) Integer category) {
-		return itemService.getCategoryItem(category);
+	@GetMapping(path = "/category/{category}")
+	public ListWrapper getItemsByCategory(@PathVariable Integer category,
+											 @RequestParam Integer start,
+											 @RequestParam Integer limit) {
+		return itemService.getCategoryItem(category, start, limit);
+	}
+
+	@GetMapping(path = "/info/{item}")
+	public Item getItem(@PathVariable Integer item) {
+		return itemService.getItem(item);
 	}
 }

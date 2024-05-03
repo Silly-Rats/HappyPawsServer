@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.silly.rats.shop.attribute.value.AttributeValue;
+import org.silly.rats.shop.item.Item;
 
 @Data
 @NoArgsConstructor
@@ -25,7 +26,7 @@ public class ItemAttribute {
 	@ManyToOne
 	@JoinColumn(name = "item")
 	@JsonBackReference
-	private ItemType itemType;
+	private Item itemType;
 
 	@ManyToOne
 	@JoinColumn(name = "value")

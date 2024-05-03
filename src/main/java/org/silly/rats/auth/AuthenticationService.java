@@ -48,10 +48,12 @@ public class AuthenticationService {
 		user.setPassword(passwordEncoder.encode(request.getPassword()));
 
 		User saved = userRepository.save(user);
-		Worker worker = new Worker();
-		worker.setWorkerId(saved.getId());
-		worker.setDescription(request.getDescription());
-		workerRepository.save(worker);
+		if (!user.getType().equals("user")) {
+			Worker worker = new Worker();
+			worker.setWorkerId(saved.getId());
+			worker.setDescription(request.getDescription());
+			workerRepository.save(worker);
+		}
 
 		String jwtToken = jwtService.generateToken(user);
 		return AuthenticationResponse.builder()

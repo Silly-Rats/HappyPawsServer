@@ -27,13 +27,6 @@ public class CategoryService {
 			return currentCategory;
 		}
 
-		if (id.equals(0)) {
-			currentCategory = new Category();
-			currentCategory.setSubCategories(
-					categoryRepository.findAllBasic());
-			return currentCategory;
-		}
-
 		Category parentCategory;
 		parentCategory = lookCategoryDown(currentCategory, id);
 		if (parentCategory == null) {
@@ -77,5 +70,9 @@ public class CategoryService {
 			}
 		}
 		return category;
+	}
+
+	public List<Category> getAllCategories() {
+		return categoryRepository.findAllBasic();
 	}
 }

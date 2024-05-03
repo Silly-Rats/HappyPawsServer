@@ -20,6 +20,11 @@ public class CategoryController {
 		return categoryService.getCategory(category);
 	}
 
+	@GetMapping(path = "/info")
+	public List<Category> getAllCategories() {
+		return categoryService.getAllCategories();
+	}
+
 	@GetMapping(path = "/attr/{category}")
 	public List<Attribute> getAttributes(@PathVariable Integer category) {
 		return categoryService.getAttributes(category);
