@@ -21,7 +21,9 @@ public class UserController {
 
 	@GetMapping(path = "/info")
 	public User getInfo(@RequestHeader(name = "Authorization") String token) {
-		return userService.getUserByToken(token);
+		token = token.substring(7);
+		Integer id = (Integer) jwtService.extractClaim(token, (c) -> c.get("id"));
+		return userService.getUserById(id);
 	}
 
 	@GetMapping(path = "/type")

@@ -17,27 +17,15 @@ import org.silly.rats.shop.item.Item;
 @Entity
 @Table(name = "item_attribute")
 public class ItemAttribute {
-	@Id
+	@EmbeddedId
 	@JsonIgnore
-	private Integer item;
-	@Id
-	private Integer value;
-
-	@ManyToOne
-	@JoinColumn(name = "item")
-	@JsonBackReference
-	private Item itemType;
-
-	@ManyToOne
-	@JoinColumn(name = "value")
-	@JsonBackReference
-	private AttributeValue attributeValue;
+	private ItemAttributeId id;
 
 	public String getAttribute() {
-		return attributeValue.getAttribute().getName();
+		return id.getAttributeValue().getAttribute().getName();
 	}
 
 	public String getValue() {
-		return attributeValue.getValue();
+		return id.getAttributeValue().getValue();
 	}
 }

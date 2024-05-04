@@ -38,8 +38,8 @@ public class Order {
 	@Column(name = "change_date")
 	private LocalDateTime changeDate = LocalDateTime.now();
 
-	@OneToMany(mappedBy = "order")
-	List<OrderItemDetails> details = new ArrayList<>();
+	@OneToMany(mappedBy = "id.order")
+	private List<OrderItemDetails> details = new ArrayList<>();
 
 	public String getStatus() {
 		return status.getName();

@@ -32,7 +32,7 @@ public class ItemType {
 	private Integer qty;
 	private Double price;
 
-	@OneToMany(mappedBy = "item")
+	@OneToMany(mappedBy = "id.item")
 	@JsonIgnore
 	private List<OrderItemDetails> orders;
 }

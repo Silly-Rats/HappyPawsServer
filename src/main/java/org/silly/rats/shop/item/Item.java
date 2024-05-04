@@ -40,6 +40,6 @@ public class Item {
 	@OneToMany(mappedBy = "item")
 	private List<ItemType> types;
 
-	@OneToMany(mappedBy = "itemType")
+	@OneToMany(mappedBy = "id.itemType")
 	private List<ItemAttribute> attributes;
 }

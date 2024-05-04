@@ -18,23 +18,12 @@ import org.silly.rats.shop.order.Order;
 @Entity
 @Table(name = "order_item_details")
 public class OrderItemDetails {
-	@Id
-	@Column(name = "item_id")
+	@EmbeddedId
 	@JsonIgnore
-	private Integer itemId;
-
-	@Id
-	@Column(name = "order_id")
-	@JsonIgnore
-	private Integer orderId;
+	private OrderDetailId id;
 	private Integer qty;
 
-	@ManyToOne
-	@JoinColumn(name = "item_id")
-	private ItemType item;
-
-	@ManyToOne
-	@JoinColumn(name = "order_id")
-	@JsonBackReference
-	private Order order;
+	public ItemType getItem() {
+		return id.getItem();
+	}
 }

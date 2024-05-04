@@ -31,7 +31,7 @@ public class AttributeValue {
 
 	private String value;
 
-	@OneToMany(mappedBy = "attributeValue")
+	@OneToMany(mappedBy = "id.attributeValue")
 	@JsonIgnore
 	private List<ItemAttribute> items;
 

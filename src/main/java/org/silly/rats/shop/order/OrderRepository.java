@@ -9,4 +9,6 @@ public interface OrderRepository
 	extends JpaRepository<Order, Integer> {
 	@Query("SELECT o FROM Order o WHERE o.status.id != ?1 AND o.status.id != ?2")
 	List<Order> findNotCompleted(Integer completed, Integer cancelled);
+
+	List<Order> findByUserId(Integer userId);
 }
