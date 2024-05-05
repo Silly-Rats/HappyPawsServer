@@ -15,7 +15,7 @@ import java.util.Map;
 public class ReserveController {
 	private final ReserveService reserveService;
 
-	@GetMapping(path = "/trainer/free/{worker}")
+	@GetMapping(path = "/training/free/{worker}")
 	public Map<LocalDate, List<String>> getFreeTrainerHours(
 			@PathVariable Integer worker,
 			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,

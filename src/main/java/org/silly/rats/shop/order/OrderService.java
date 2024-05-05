@@ -16,9 +16,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OrderService {
 	private final OrderRepository orderRepository;
-	private final OrderDetailRepository orderDetailRepository;
 	private final OrderStatusRepository orderStatusRepository;
-	private final ItemTypeRepository itemTypeRepository;
 
 	public List<Order> getNotCompletedOrders() {
 		Integer completed = orderStatusRepository.getIdByName("Completed");
@@ -64,11 +62,15 @@ public class OrderService {
 		Order order = optional.get();
 
 		if (type.equals("shop worker")) {
+			if (!order.getStatus().equals("User Cancelled")) {
+				System.out.println(order.getStatus());
+				freeItems(order);
+			}
 			order.setStatus(orderStatusRepository.findByName("Cancelled"));
 		} else {
+			freeItems(order);
 			order.setStatus(orderStatusRepository.findByName("User Cancelled"));
 		}
-		freeItems(order);
 
 		order.setChangeDate(LocalDateTime.now());
 		return orderRepository.save(order);
@@ -87,14 +89,12 @@ public class OrderService {
 	private void reserveItems(Order order) {
 		for (OrderItemDetails detail : order.getDetails()) {
 			detail.getItem().setQty(detail.getItem().getQty() - detail.getQty());
-//			itemTypeRepository.save(detail.getItem());
 		}
 	}
 
 	private void freeItems(Order order) {
 		for (OrderItemDetails detail : order.getDetails()) {
 			detail.getItem().setQty(detail.getItem().getQty() + detail.getQty());
-//			itemTypeRepository.save(detail.getItem());
 		}
 	}
 }

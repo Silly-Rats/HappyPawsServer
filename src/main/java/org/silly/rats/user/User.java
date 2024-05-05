@@ -13,6 +13,7 @@ import org.silly.rats.shop.order.Order;
 import org.silly.rats.user.dog.Dog;
 import org.silly.rats.user.type.AccountType;
 import org.silly.rats.user.worker.Worker;
+import org.silly.rats.util.ImageUtil;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -118,5 +119,10 @@ public class User
 
 	public String getType() {
 		return type.getName();
+	}
+
+	@JsonIgnore
+	public String getImage() {
+		return ImageUtil.loadImage("img/user", imageName);
 	}
 }

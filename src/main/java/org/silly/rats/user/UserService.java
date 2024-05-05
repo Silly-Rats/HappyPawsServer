@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.silly.rats.config.JwtService;
 import org.silly.rats.user.type.AccountTypeRepository;
 import org.silly.rats.user.worker.WorkerInfo;
+import org.silly.rats.util.ImageUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,5 +28,25 @@ public class UserService {
 
 	public User getUserById(Integer id) {
 		return userRepository.findById(id).orElse(null);
+	}
+
+	public String saveImage(Integer id, String image) {
+		User user = userRepository.findById(id).orElse(null);
+		if (user == null) {
+			return null;
+		}
+
+		user.setImageName(id + ".jpg");
+		userRepository.save(user);
+		return ImageUtil.saveImage(image, "img/user", id.toString());
+	}
+
+	public String getImage(Integer id) {
+		User user = userRepository.findById(id).orElse(null);
+		if (user == null) {
+			return null;
+		}
+
+		return user.getImage();
 	}
 }
