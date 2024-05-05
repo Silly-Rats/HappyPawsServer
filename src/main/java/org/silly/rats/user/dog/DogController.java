@@ -1,6 +1,8 @@
 package org.silly.rats.user.dog;
 
 import lombok.RequiredArgsConstructor;
+import org.silly.rats.config.JwtService;
+import org.silly.rats.user.UserService;
 import org.silly.rats.user.dog.breed.Breed;
 import org.silly.rats.user.dog.breed.BreedService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,10 +18,13 @@ import java.util.List;
 public class DogController {
 	private final DogService dogService;
 	private final BreedService breedService;
+	private final JwtService jwtService;
 
 	@GetMapping(path = "/user")
 	public List<Dog> getUserDogs(@RequestHeader(name = "Authorization") String token) {
-		return dogService.getUserDogs(token);
+		token = token.substring(7);
+		Integer id = (Integer) jwtService.extractClaim(token, (c) -> c.get("id"));
+		return dogService.getUserDogs(id);
 	}
 
 	@GetMapping("/breeds")

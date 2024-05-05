@@ -6,10 +6,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.silly.rats.reserve.details.GroomingDetails;
+import org.silly.rats.reserve.details.HotelDetails;
 import org.silly.rats.reserve.details.TrainingDetails;
+import org.silly.rats.shop.order.Order;
 import org.silly.rats.user.dog.Dog;
 import org.silly.rats.user.type.AccountType;
 import org.silly.rats.user.worker.Worker;
+import org.silly.rats.util.ImageUtil;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -59,11 +63,20 @@ public class User
 	private Date modifyDate = new Date();
 
 	@OneToMany(mappedBy = "user")
+	@JsonIgnore
 	private List<Dog> dogs;
 
 	@OneToMany(mappedBy = "worker")
 	@JsonIgnore
 	private List<TrainingDetails> trainings;
+
+	@OneToMany(mappedBy = "worker")
+	@JsonIgnore
+	private List<GroomingDetails> groomingDetails;
+
+	@OneToMany(mappedBy = "user")
+	@JsonIgnore
+	private List<Order> orders;
 
 	@JsonIgnore
 	private String password;
@@ -106,5 +119,10 @@ public class User
 
 	public String getType() {
 		return type.getName();
+	}
+
+	@JsonIgnore
+	public String getImage() {
+		return ImageUtil.loadImage("img/user", imageName);
 	}
 }

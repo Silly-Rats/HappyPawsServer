@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.silly.rats.shop.attribute.value.AttributeValue;
+import org.silly.rats.shop.item.Item;
 
 @Data
 @NoArgsConstructor
@@ -16,27 +17,15 @@ import org.silly.rats.shop.attribute.value.AttributeValue;
 @Entity
 @Table(name = "item_attribute")
 public class ItemAttribute {
-	@Id
+	@EmbeddedId
 	@JsonIgnore
-	private Integer item;
-	@Id
-	private Integer value;
-
-	@ManyToOne
-	@JoinColumn(name = "item")
-	@JsonBackReference
-	private ItemType itemType;
-
-	@ManyToOne
-	@JoinColumn(name = "value")
-	@JsonBackReference
-	private AttributeValue attributeValue;
+	private ItemAttributeId id;
 
 	public String getAttribute() {
-		return attributeValue.getAttribute().getName();
+		return id.getAttributeValue().getAttribute().getName();
 	}
 
 	public String getValue() {
-		return attributeValue.getValue();
+		return id.getAttributeValue().getValue();
 	}
 }

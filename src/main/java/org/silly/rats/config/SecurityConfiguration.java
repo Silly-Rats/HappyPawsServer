@@ -27,11 +27,14 @@ public class SecurityConfiguration {
 				.authorizeHttpRequests((auth) -> auth
 						.requestMatchers("api/auth/register",
 								"api/auth/authenticate",
-								"api/user/**",
+								"api/user/worker/",
 								"api/dog/breeds",
-								"api/category/*",
-								"api/item/*",
-								"api/reserve/trainer/free/*")
+								"api/category/*/info",
+								"api/category/info",
+								"api/category/*/attr",
+								"api/item/*/info",
+								"api/item/*/items",
+								"api/reserve/training/free/*")
 						.permitAll()
 						.anyRequest().authenticated())
 				.sessionManagement(session -> session
@@ -49,8 +52,9 @@ public class SecurityConfiguration {
 				registry.addMapping("/api/**")
 						.allowedOrigins("http://localhost:63343",
 								"http://localhost:63342",
-								"http://localhost:5500",
-								"http://localhost:5501")
+								"http://127.0.0.1:5500",
+								"http://127.0.0.1:5501",
+								"http://localhost:8000")
 						.allowedMethods("*")
 						.allowedHeaders("*")
 						.allowCredentials(true);

@@ -15,4 +15,3 @@ spring:
 server:
   error:
     include-message: always
-#spring.jpa.hibernate.ddl-auto=update

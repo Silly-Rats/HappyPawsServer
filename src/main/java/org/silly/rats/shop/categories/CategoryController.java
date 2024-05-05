@@ -15,12 +15,17 @@ import java.util.List;
 public class CategoryController {
 	private final CategoryService categoryService;
 
-	@GetMapping(path = "/info/{category}")
+	@GetMapping(path = "/{category}/info")
 	public Category getCategory(@PathVariable Integer category) {
 		return categoryService.getCategory(category);
 	}
 
-	@GetMapping(path = "/attr/{category}")
+	@GetMapping(path = "/info")
+	public List<Category> getAllCategories() {
+		return categoryService.getAllCategories();
+	}
+
+	@GetMapping(path = "/{category}/attr")
 	public List<Attribute> getAttributes(@PathVariable Integer category) {
 		return categoryService.getAttributes(category);
 	}

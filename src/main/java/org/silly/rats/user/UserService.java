@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.silly.rats.config.JwtService;
 import org.silly.rats.user.type.AccountTypeRepository;
 import org.silly.rats.user.worker.WorkerInfo;
+import org.silly.rats.util.ImageUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,7 +14,6 @@ import java.util.List;
 public class UserService {
 	private final UserRepository userRepository;
 	private final AccountTypeRepository accountTypeRepository;
-	private final JwtService jwtService;
 
 	public List<WorkerInfo> getAllWorkersByType(String type) {
 		try {
@@ -26,12 +26,27 @@ public class UserService {
 		}
 	}
 
-	public User getUserByToken(String token) {
-		if (token.startsWith("Bearer ")) {
-			token = token.substring(7);
-			Integer id = (Integer) jwtService.extractClaim(token, (c) -> c.get("id"));
-			return userRepository.findById(id).orElse(null);
+	public User getUserById(Integer id) {
+		return userRepository.findById(id).orElse(null);
+	}
+
+	public String saveImage(Integer id, String image) {
+		User user = userRepository.findById(id).orElse(null);
+		if (user == null) {
+			return null;
 		}
-		return null;
+
+		user.setImageName(id + ".jpg");
+		userRepository.save(user);
+		return ImageUtil.saveImage(image, "img/user", id.toString());
+	}
+
+	public String getImage(Integer id) {
+		User user = userRepository.findById(id).orElse(null);
+		if (user == null) {
+			return null;
+		}
+
+		return user.getImage();
 	}
 }
