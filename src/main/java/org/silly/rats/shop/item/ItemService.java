@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -23,9 +24,13 @@ public class ItemService {
 	private List<Item> items;
 
 	public ListWrapper getCategoryItem(Integer categoryId, Integer start, Integer limit) {
-		if (currentCategory == null || !currentCategory.equals(categoryId)) {
+		if (items == null || !currentCategory.equals(categoryId)) {
 			items = itemRepository.findByCategoryId(categoryId);
 			currentCategory = categoryId;
+		}
+
+		if (items.size() < start) {
+			return new ListWrapper(new ArrayList<>(), false);
 		}
 
 		return new ListWrapper(items.subList(start, Math.min(start + limit, items.size())),

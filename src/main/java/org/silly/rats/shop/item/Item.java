@@ -41,7 +41,7 @@ public class Item {
 	@JsonIgnore
 	private List<ItemImage> images;
 
-	@OneToMany(mappedBy = "item")
+	@OneToMany(mappedBy = "item", fetch = FetchType.EAGER)
 	private List<ItemType> types;
 
 	@OneToMany(mappedBy = "id.itemType")

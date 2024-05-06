@@ -59,8 +59,6 @@ public class ItemController {
 		if (!jwtService.extractClaim(token, (c) -> c.get("type")).equals("shop worker")) {
 			throw new AuthenticationException("User is not a shop worker");
 		}
-
-		System.out.println(imageName);
 		itemService.deleteItemImage(id, imageName);
 	}
 }
