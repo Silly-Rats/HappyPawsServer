@@ -12,7 +12,10 @@ import org.silly.rats.shop.item.details.ItemAttribute;
 import org.silly.rats.shop.item.details.ItemImage;
 import org.silly.rats.shop.item.details.ItemType;
 import org.silly.rats.shop.order.details.OrderItemDetails;
+import org.silly.rats.util.ImageUtil;
+import org.silly.rats.util.ImageWrapper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -35,6 +38,7 @@ public class Item {
 	private String description;
 
 	@OneToMany(mappedBy = "item")
+	@JsonIgnore
 	private List<ItemImage> images;
 
 	@OneToMany(mappedBy = "item")
@@ -42,4 +46,14 @@ public class Item {
 
 	@OneToMany(mappedBy = "id.itemType")
 	private List<ItemAttribute> attributes;
+
+	@JsonIgnore
+	public List<ImageWrapper> getImageWrappers() {
+		List<ImageWrapper> loadedImages = new ArrayList<>(images.size());
+		for (ItemImage image : images) {
+			loadedImages.add(new ImageWrapper(image.getImageName(),
+					ImageUtil.loadImage("img/item", image.getImageName())));
+		}
+		return loadedImages;
+	}
 }

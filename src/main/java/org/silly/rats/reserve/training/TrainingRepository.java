@@ -1,4 +1,4 @@
-package org.silly.rats.reserve.details;
+package org.silly.rats.reserve.training;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

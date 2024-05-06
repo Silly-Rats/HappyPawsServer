@@ -1,4 +1,4 @@
-package org.silly.rats.reserve.details;
+package org.silly.rats.reserve.grooming;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;

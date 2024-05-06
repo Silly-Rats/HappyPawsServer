@@ -1,13 +1,18 @@
 package org.silly.rats.reserve;
 
 import lombok.RequiredArgsConstructor;
-import org.silly.rats.reserve.details.GroomingRepository;
-import org.silly.rats.reserve.details.HotelRepository;
-import org.silly.rats.reserve.details.TrainingDetails;
-import org.silly.rats.reserve.details.TrainingRepository;
+import org.silly.rats.reserve.grooming.GroomingRepository;
+import org.silly.rats.reserve.hotel.HotelRepository;
+import org.silly.rats.reserve.training.Pass;
+import org.silly.rats.reserve.training.PassRepository;
+import org.silly.rats.reserve.training.TrainingDetails;
+import org.silly.rats.reserve.training.TrainingRepository;
 import org.silly.rats.reserve.service.ServiceRepository;
+import org.silly.rats.user.dog.Dog;
+import org.silly.rats.user.dog.DogRepository;
 import org.springframework.stereotype.Service;
 
+import javax.naming.AuthenticationException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -22,6 +27,8 @@ public class ReserveService {
 	private final TrainingRepository trainingRepository;
 	private final GroomingRepository groomingRepository;
 	private final HotelRepository hotelRepository;
+	private final PassRepository passRepository;
+	private final DogRepository dogRepository;
 
 	public Map<LocalDate, List<String>> getFreeTrainerHours(Integer worker, LocalDateTime start, LocalDateTime end) {
 		List<TrainingDetails> details = trainingRepository.findWorkerInterval(worker, start, end.plusDays(1));
@@ -50,6 +57,16 @@ public class ReserveService {
 		return available;
 	}
 
+	public List<Pass> getDogPasses(Integer dogId, Integer userId)
+			throws AuthenticationException {
+		List<Dog> dogs = dogRepository.getDogByUserId(userId);
+		if (dogId == null || !containsDog(dogs, dogId)) {
+			throw new AuthenticationException("User don't have this dog");
+		}
+
+		return passRepository.findByDogId(dogId);
+	}
+
 	private void addToMap(Map<LocalDate, List<String>> available,
 						  Map<LocalDate, List<Integer>> busy, LocalDate key, int i) {
 		if (i == 13) {
@@ -61,5 +78,15 @@ public class ReserveService {
 				return o;
 			});
 		}
+	}
+
+	private boolean containsDog(List<Dog> dogs, Integer dogId) {
+		for (Dog d : dogs) {
+			if (d.getId().equals(dogId)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

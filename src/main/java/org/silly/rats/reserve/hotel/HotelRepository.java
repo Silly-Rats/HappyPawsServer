@@ -1,5 +1,6 @@
-package org.silly.rats.reserve.details;
+package org.silly.rats.reserve.hotel;
 
+import org.silly.rats.reserve.training.TrainingDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

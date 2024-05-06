@@ -29,4 +29,9 @@ public class CategoryController {
 	public List<Attribute> getAttributes(@PathVariable Integer category) {
 		return categoryService.getAttributes(category);
 	}
+
+	@GetMapping(path = "/{category}/img")
+	public String getImage(@PathVariable Integer category) {
+		return categoryService.getCategoryImage(category);
+	}
 }

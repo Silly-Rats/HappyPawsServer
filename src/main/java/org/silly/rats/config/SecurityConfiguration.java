@@ -29,12 +29,15 @@ public class SecurityConfiguration {
 								"api/auth/authenticate",
 								"api/user/worker/",
 								"api/dog/breeds",
+								"api/reserve/training/free/*",
+								"api/reserve/training/pass/*",
 								"api/category/*/info",
 								"api/category/info",
 								"api/category/*/attr",
 								"api/item/*/info",
 								"api/item/*/items",
-								"api/reserve/training/free/*")
+								"api/item/*/images",
+								"api/item/all/id")
 						.permitAll()
 						.anyRequest().authenticated())
 				.sessionManagement(session -> session
