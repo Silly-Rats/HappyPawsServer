@@ -3,7 +3,6 @@ package org.silly.rats.user;
 import lombok.RequiredArgsConstructor;
 import org.silly.rats.config.JwtService;
 import org.silly.rats.user.worker.WorkerInfo;
-import org.silly.rats.util.ImageUtil;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

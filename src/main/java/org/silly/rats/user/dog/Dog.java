@@ -12,6 +12,7 @@ import org.silly.rats.user.User;
 import org.silly.rats.user.dog.breed.Breed;
 import org.silly.rats.user.dog.breed.OtherBreed;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class Dog {
 	private Integer id;
 
 	private String name;
-	private Date dob;
+	private LocalDate dob;
 
 	@ManyToOne
 	@JoinColumn(name = "breed")

@@ -30,6 +30,6 @@ public class Reserve {
 	@JoinColumn(name = "service")
 	private ServiceType service;
 
-	@Column(name = "completion_date")
-	private LocalDateTime completionDate;
+	@Column(name = "reserve_time")
+	private LocalDateTime reserveTime;
 }

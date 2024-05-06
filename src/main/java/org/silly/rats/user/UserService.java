@@ -36,9 +36,10 @@ public class UserService {
 			return null;
 		}
 
+		String savedImage = ImageUtil.saveImage(image, "img/user", id.toString());
 		user.setImageName(id + ".jpg");
 		userRepository.save(user);
-		return ImageUtil.saveImage(image, "img/user", id.toString());
+		return savedImage;
 	}
 
 	public String getImage(Integer id) {

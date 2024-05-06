@@ -1,12 +1,12 @@
-package org.silly.rats.reserve.details;
+package org.silly.rats.reserve.grooming;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.silly.rats.reserve.Pass;
 import org.silly.rats.reserve.Reserve;
+import org.silly.rats.reserve.ReserveDetails;
 import org.silly.rats.user.User;
 import org.silly.rats.user.worker.WorkerInfo;
 
@@ -17,10 +17,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "training")
-public class TrainingDetails implements ReserveDetails {
+@Table(name = "grooming")
+public class GroomingDetails implements ReserveDetails {
 	@Id
-	@Column(name = "id")
 	private Long id;
 
 	@OneToOne
@@ -28,15 +27,12 @@ public class TrainingDetails implements ReserveDetails {
 	private Reserve reserve;
 
 	@ManyToOne
-	@JoinColumn(name = "pass")
-	private Pass pass;
-
-	@ManyToOne
 	@JoinColumn(name = "worker_id")
 	private User worker;
 
-	@Column(name = "reserve_time")
-	private LocalDateTime reserveTime;
+	@ManyToOne
+	@JoinColumn(name = "procedure_id")
+	private GroomingProcedure procedure;
 
 	public WorkerInfo getWorker() {
 		return new WorkerInfo(worker.getWorkerDetails());

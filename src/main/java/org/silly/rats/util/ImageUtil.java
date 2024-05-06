@@ -18,14 +18,15 @@ public class ImageUtil {
 		try {
 			byte[] bytes = Files.readAllBytes(Path.of(fileName));
 			String base64bytes = Base64.getEncoder().encodeToString(bytes);
-			return "data:image/jpeg;base64," + base64bytes;
+			return "data:image/png;base64," + base64bytes;
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			e.printStackTrace();
+			return null;
 		}
 	}
 
 	public static String saveImage(String image, String path, String name) {
-		String fileName = path + "/" + name + ".jpg";
+		String fileName = path + "/" + name + ".png";
 
 		String[] parts = image.split(",");
 		if (parts.length != 2 || !parts[0].startsWith("data:image")) {
@@ -40,7 +41,7 @@ public class ImageUtil {
 					bufferedImage.getHeight(), BufferedImage.TYPE_INT_RGB);
 
 			newImage.getGraphics().drawImage(bufferedImage, 0, 0, null);
-			ImageIO.write(newImage, "jpg", new File(fileName));
+			ImageIO.write(newImage, "png", new File(fileName));
 
 			return loadImage(fileName);
 		} catch (IOException e) {

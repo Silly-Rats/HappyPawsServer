@@ -6,6 +6,7 @@ import org.silly.rats.shop.attribute.Attribute;
 import org.silly.rats.shop.attribute.AttributeRepository;
 import org.silly.rats.shop.item.Item;
 import org.silly.rats.shop.item.ItemRepository;
+import org.silly.rats.util.ImageUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,13 +30,10 @@ public class CategoryService {
 
 		Category parentCategory;
 		parentCategory = lookCategoryDown(currentCategory, id);
-		if (parentCategory == null) {
-			parentCategory = lookCategoryUp(currentCategory, id);
-		}
 
 		currentCategory = parentCategory;
 		if (currentCategory == null) {
-			currentCategory = categoryRepository.getReferenceById(id);
+			currentCategory = categoryRepository.findById(id).orElse(null);
 		}
 		return currentCategory;
 	}
@@ -48,28 +46,27 @@ public class CategoryService {
 		return currentCategory.getAttributes();
 	}
 
+	public String getCategoryImage(Integer id) {
+		if (currentCategory == null || !currentCategory.getId().equals(id)) {
+			getCategory(id);
+		}
+		return ImageUtil.loadImage("img/category", currentCategory.getImageName());
+	}
+
 	private Category lookCategoryDown(Category category, Integer id) {
 		if (category.getId().equals(id)) {
 			return category;
 		}
 
-		for (Category subCategory : category.getSubCategories()) {
-			Category newCategory = lookCategoryDown(subCategory, id);
-			if (newCategory != null) {
-				return newCategory;
+		if (Hibernate.isInitialized(category.getSubCategories())) {
+			for (Category subCategory : category.getSubCategories()) {
+				Category newCategory = lookCategoryDown(subCategory, id);
+				if (newCategory != null) {
+					return newCategory;
+				}
 			}
 		}
 		return null;
-	}
-
-	private Category lookCategoryUp(Category category, Integer id) {
-		while (category != null) {
-			category = category.getParent();
-			if (category.getId().equals(id)) {
-				break;
-			}
-		}
-		return category;
 	}
 
 	public List<Category> getAllCategories() {

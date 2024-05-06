@@ -6,9 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.silly.rats.reserve.details.GroomingDetails;
-import org.silly.rats.reserve.details.HotelDetails;
-import org.silly.rats.reserve.details.TrainingDetails;
+import org.silly.rats.reserve.grooming.GroomingDetails;
+import org.silly.rats.reserve.training.TrainingDetails;
 import org.silly.rats.shop.order.Order;
 import org.silly.rats.user.dog.Dog;
 import org.silly.rats.user.type.AccountType;
@@ -18,6 +17,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -40,7 +41,7 @@ public class User
 
 	@Column(name = "last_name")
 	private String lastName;
-	private Date dob;
+	private LocalDate dob;
 
 	@Column(name = "phone_num")
 	private String phoneNum;
@@ -60,7 +61,7 @@ public class User
 
 	@Column(name = "modify_date")
 	@JsonIgnore
-	private Date modifyDate = new Date();
+	private LocalDate modifyDate = LocalDate.now();
 
 	@OneToMany(mappedBy = "user")
 	@JsonIgnore
