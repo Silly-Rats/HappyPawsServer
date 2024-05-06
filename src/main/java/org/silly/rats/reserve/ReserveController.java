@@ -2,6 +2,7 @@ package org.silly.rats.reserve;
 
 import lombok.RequiredArgsConstructor;
 import org.silly.rats.config.JwtService;
+import org.silly.rats.reserve.request.TrainingRequest;
 import org.silly.rats.reserve.training.Pass;
 import org.silly.rats.user.UserService;
 import org.silly.rats.user.dog.Dog;
@@ -32,11 +33,24 @@ public class ReserveController {
 
 	@GetMapping(path = "/training/pass/{dog}")
 	public List<Pass> getPass(@RequestHeader(name = "Authorization") String token,
-						@PathVariable Integer dog)
+							  @PathVariable Integer dog)
 			throws AuthenticationException {
 		token = token.substring(7);
 		Integer userId = (Integer) jwtService.extractClaim(token, (c) -> c.get("id"));
 
 		return reserveService.getDogPasses(dog, userId);
+	}
+
+	@PostMapping(path = "/training")
+	public void reserveTraining(@RequestHeader(name = "Authorization", required = false) String token,
+								@RequestBody TrainingRequest request)
+			throws Exception {
+		Integer userId = null;
+		if (token != null) {
+			token = token.substring(7);
+			userId = (Integer) jwtService.extractClaim(token, (c) -> c.get("id"));
+		}
+
+		reserveService.reserveTraining(request, userId);
 	}
 }

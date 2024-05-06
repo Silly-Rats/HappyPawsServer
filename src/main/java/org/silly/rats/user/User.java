@@ -41,7 +41,7 @@ public class User
 
 	@Column(name = "last_name")
 	private String lastName;
-	private Date dob;
+	private LocalDate dob;
 
 	@Column(name = "phone_num")
 	private String phoneNum;

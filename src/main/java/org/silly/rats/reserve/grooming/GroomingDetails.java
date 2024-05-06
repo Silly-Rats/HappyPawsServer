@@ -34,9 +34,6 @@ public class GroomingDetails implements ReserveDetails {
 	@JoinColumn(name = "procedure_id")
 	private GroomingProcedure procedure;
 
-	@Column(name = "reserve_time")
-	private LocalDateTime reserveTime;
-
 	public WorkerInfo getWorker() {
 		return new WorkerInfo(worker.getWorkerDetails());
 	}

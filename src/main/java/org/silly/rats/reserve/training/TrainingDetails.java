@@ -21,7 +21,6 @@ import java.time.LocalDateTime;
 @Table(name = "training")
 public class TrainingDetails implements ReserveDetails {
 	@Id
-	@Column(name = "id")
 	private Long id;
 
 	@OneToOne
@@ -36,9 +35,6 @@ public class TrainingDetails implements ReserveDetails {
 	@ManyToOne
 	@JoinColumn(name = "worker_id")
 	private User worker;
-
-	@Column(name = "reserve_time")
-	private LocalDateTime reserveTime;
 
 	public WorkerInfo getWorker() {
 		return new WorkerInfo(worker.getWorkerDetails());

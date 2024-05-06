@@ -13,6 +13,7 @@ public interface TrainingRepository
 	@Query("SELECT d FROM TrainingDetails d WHERE d.reserve.dog.id = ?1")
 	TrainingDetails findByDogId(Integer id);
 
-	@Query("SELECT d FROM TrainingDetails d WHERE d.worker.id = ?1 AND d.reserveTime > ?2 AND d.reserveTime < ?3")
+	@Query("SELECT d FROM TrainingDetails d WHERE d.worker.id = ?1 " +
+			"AND d.reserve.reserveTime BETWEEN ?2 AND ?3")
 	List<TrainingDetails> findWorkerInterval(Integer worker_id, LocalDateTime start, LocalDateTime end);
 }

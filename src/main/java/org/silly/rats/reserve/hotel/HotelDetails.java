@@ -25,9 +25,6 @@ public class HotelDetails implements ReserveDetails {
 	@JoinColumn(name = "id")
 	private Reserve reserve;
 
-	@Column(name = "start_date")
-	private LocalDateTime startDate;
-
 	@Column(name = "end_date")
 	private LocalDateTime endDate;
 

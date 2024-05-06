@@ -51,7 +51,7 @@ public class Pass {
 		List<LocalDateTime> times = new ArrayList<>(trainings.size());
 
 		for (TrainingDetails training : trainings) {
-			times.add(training.getReserveTime());
+			times.add(training.getReserve().getReserveTime());
 		}
 
 		return times;

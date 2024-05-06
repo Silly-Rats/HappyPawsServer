@@ -19,7 +19,7 @@ public class OtherBreed {
 	@Id
 	@Column(name = "dog_id")
 	@JsonIgnore
-	private Byte id;
+	private Integer id;
 
 	private String name;
 	private String size;

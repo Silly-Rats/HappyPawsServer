@@ -31,6 +31,7 @@ public class SecurityConfiguration {
 								"api/dog/breeds",
 								"api/reserve/training/free/*",
 								"api/reserve/training/pass/*",
+								"api/reserve/training",
 								"api/category/*/info",
 								"api/category/info",
 								"api/category/*/attr",

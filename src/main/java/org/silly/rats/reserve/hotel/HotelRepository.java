@@ -14,6 +14,6 @@ public interface HotelRepository
 	@Query("SELECT d FROM HotelDetails d WHERE d.reserve.dog.id = ?1")
 	TrainingDetails findByDogId(Integer id);
 
-	@Query("SELECT d FROM HotelDetails d WHERE d.startDate >= ?1 AND d.endDate <= ?2")
+	@Query("SELECT d FROM HotelDetails d WHERE d.reserve.reserveTime >= ?1 AND d.endDate <= ?2")
 	List<TrainingDetails> findBetweenDates(LocalDateTime start, LocalDateTime end);
 }
