@@ -3,12 +3,10 @@ package org.silly.rats.reserve;
 import lombok.RequiredArgsConstructor;
 import org.silly.rats.reserve.grooming.GroomingRepository;
 import org.silly.rats.reserve.hotel.HotelRepository;
+import org.silly.rats.reserve.request.PassPatchRequest;
 import org.silly.rats.reserve.request.ReserveRequest;
 import org.silly.rats.reserve.request.TrainingRequest;
-import org.silly.rats.reserve.training.Pass;
-import org.silly.rats.reserve.training.PassRepository;
-import org.silly.rats.reserve.training.TrainingDetails;
-import org.silly.rats.reserve.training.TrainingRepository;
+import org.silly.rats.reserve.training.*;
 import org.silly.rats.reserve.service.ServiceRepository;
 import org.silly.rats.user.User;
 import org.silly.rats.user.UserRepository;
@@ -102,7 +100,7 @@ public class ReserveService {
 	private Dog getDog(ReserveRequest request, Integer userId)
 			throws Exception {
 		if (request.getDogId() == null) {
-			throw new IllegalStateException("Dog Id must be specified");
+			throw new RuntimeException("Dog Id must be specified");
 		}
 		return getUserDog(request.getDogId(), userId);
 	}
@@ -148,7 +146,7 @@ public class ReserveService {
 	private Worker getWorker(Integer workerId, String type) {
 		Worker worker = workerRepository.findById(workerId).orElse(null);
 		if (worker == null || !worker.getUser().getType().equals(type)) {
-			throw new IllegalStateException("There is no such " + type + ": id = " + workerId);
+			throw new RuntimeException("There is no such " + type + ": id = " + workerId);
 		}
 		return worker;
 	}
@@ -173,7 +171,8 @@ public class ReserveService {
 
 	private void createTrainingReserve(Dog dog, Worker trainer, Pass pass, List<LocalDateTime> times) {
 		for (LocalDateTime time : times) {
-			Reserve reserve = new Reserve(null, dog, serviceRepository.findByName("Training"), time);
+			Reserve reserve = new Reserve(null, dog,
+					serviceRepository.findByName("Training"), time);
 			reserve = reserveRepository.save(reserve);
 
 			TrainingDetails trainingDetails = new TrainingDetails(reserve.getId(), null, pass, trainer.getUser());
@@ -215,5 +214,30 @@ public class ReserveService {
 		}
 
 		return dog;
+	}
+
+	public void patchPass(PassPatchRequest request) {
+		Pass pass = passRepository.findById(request.getPassId())
+				.orElseThrow(() -> new RuntimeException("There is id with id: " + request.getPassId()));
+		Dog dog = pass.getDog();
+		Worker trainer = pass.getTrainer().getWorkerDetails();
+
+		List<LocalDateTime> newTrainings = new ArrayList<>();
+		for (TrainingWrapper wrapper : request.getTimes()) {
+			if (wrapper.getId() != null) {
+				TrainingDetails training = trainingRepository.findById(wrapper.getId()).orElse(null);
+				if (!pass.getTrainings().contains(training)) {
+					throw new RuntimeException("Pass don't contains reserve with id: " + wrapper.getId());
+				}
+
+				Reserve reserve = training.getReserve();
+				reserve.setReserveTime(wrapper.getTime());
+				reserveRepository.save(reserve);
+			} else {
+				newTrainings.add(wrapper.getTime());
+			}
+		}
+
+		createTrainingReserve(dog, trainer, pass, newTrainings);
 	}
 }

@@ -1,6 +1,7 @@
 package org.silly.rats.reserve.request;
 
 import lombok.*;
+import org.silly.rats.reserve.training.TrainingWrapper;
 
 import java.time.LocalDateTime;
 import java.util.List;

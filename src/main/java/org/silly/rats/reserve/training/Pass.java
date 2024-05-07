@@ -47,11 +47,12 @@ public class Pass {
 		return new WorkerInfo(trainer.getWorkerDetails());
 	}
 
-	public List<LocalDateTime> getTrainingTimes() {
-		List<LocalDateTime> times = new ArrayList<>(trainings.size());
+	public List<TrainingWrapper> getTrainingTimes() {
+		List<TrainingWrapper> times = new ArrayList<>(trainings.size());
 
 		for (TrainingDetails training : trainings) {
-			times.add(training.getReserve().getReserveTime());
+			times.add(new TrainingWrapper(training.getId(),
+					training.getReserve().getReserveTime()));
 		}
 
 		return times;

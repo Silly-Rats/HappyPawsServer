@@ -2,6 +2,7 @@ package org.silly.rats.reserve;
 
 import lombok.RequiredArgsConstructor;
 import org.silly.rats.config.JwtService;
+import org.silly.rats.reserve.request.PassPatchRequest;
 import org.silly.rats.reserve.request.TrainingRequest;
 import org.silly.rats.reserve.training.Pass;
 import org.silly.rats.user.UserService;
@@ -52,5 +53,12 @@ public class ReserveController {
 		}
 
 		reserveService.reserveTraining(request, userId);
+	}
+
+	@PatchMapping(path = "/training")
+	public void patchPass(@RequestHeader(name = "Authorization", required = false) String token,
+								@RequestBody PassPatchRequest request)
+			throws Exception {
+		reserveService.patchPass(request);
 	}
 }
