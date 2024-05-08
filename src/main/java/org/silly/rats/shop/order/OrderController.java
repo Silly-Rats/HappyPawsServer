@@ -17,8 +17,7 @@ public class OrderController {
 	@GetMapping(path ="/not_completed")
 	public List<Order> getNotCompletedOrders(@RequestHeader("Authorization") String token)
 			throws AuthenticationException {
-		token = token.substring(7);
-		if (!jwtService.extractClaim(token, (c) -> c.get("type")).equals("shop worker")) {
+		if (!isShopWorker(token)) {
 			throw new AuthenticationException("User is not a shop worker");
 		}
 
@@ -27,17 +26,22 @@ public class OrderController {
 
 	@GetMapping(path = "/user")
 	public List<UserOrder> getUserItems(@RequestHeader(name = "Authorization") String token) {
-		token = token.substring(7);
-		Integer id = (Integer) jwtService.extractClaim(token, (c) -> c.get("id"));
+		Integer id = extractId(token);
 		return orderService.getUserOrders(id);
+	}
+
+	@PostMapping(path = "/user")
+	public void addUserOrder(@RequestHeader(name = "Authorization") String token,
+							 @RequestBody List<OrderRequest> request) {
+		Integer id = extractId(token);
+		orderService.addUserOrder(request, id);
 	}
 
 	@PatchMapping(path = "/proceed")
 	public Order proceedOrder(@RequestHeader(name = "Authorization") String token,
 							  @RequestBody Integer id)
 			throws AuthenticationException {
-		token = token.substring(7);
-		if (!jwtService.extractClaim(token, (c) -> c.get("type")).equals("shop worker")) {
+		if (!isShopWorker(token)) {
 			throw new AuthenticationException("User is not a shop worker");
 		}
 
@@ -47,9 +51,21 @@ public class OrderController {
 	@PatchMapping(path = "/cancel")
 	public Order cancelOrder(@RequestHeader(name = "Authorization") String token,
 			@RequestBody Integer id) {
-		token = token.substring(7);
-		String type = jwtService.extractClaim(token, (c) -> c.get("type")).toString();
-
+		String type = extractType(token);
 		return orderService.cancelOrder(id, type);
+	}
+
+	private Integer extractId(String token) {
+		token = token.substring(7);
+		return (Integer) jwtService.extractClaim(token, (c) -> c.get("id"));
+	}
+
+	private String extractType(String token) {
+		token = token.substring(7);
+		return (String) jwtService.extractClaim(token, (c) -> c.get("type"));
+	}
+
+	private boolean isShopWorker(String token) {
+		return extractId(token).equals("shop worker");
 	}
 }

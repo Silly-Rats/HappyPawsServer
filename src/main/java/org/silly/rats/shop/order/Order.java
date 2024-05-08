@@ -1,14 +1,14 @@
 package org.silly.rats.shop.order;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.silly.rats.shop.order.details.OrderItemDetails;
 import org.silly.rats.shop.order.details.OrderStatus;
 import org.silly.rats.user.User;
 
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +21,7 @@ import java.util.List;
 @Table(name = "`order`")
 public class Order {
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "order_id")
 	private Integer id;
 
