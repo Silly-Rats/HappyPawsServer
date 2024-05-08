@@ -11,7 +11,6 @@ import org.silly.rats.shop.categories.Category;
 import org.silly.rats.shop.item.details.ItemAttribute;
 import org.silly.rats.shop.item.details.ItemImage;
 import org.silly.rats.shop.item.details.ItemType;
-import org.silly.rats.shop.order.details.OrderItemDetails;
 import org.silly.rats.util.ImageUtil;
 import org.silly.rats.util.ImageWrapper;
 
@@ -41,10 +40,10 @@ public class Item {
 	@JsonIgnore
 	private List<ItemImage> images;
 
-	@OneToMany(mappedBy = "item", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "item")
 	private List<ItemType> types;
 
-	@OneToMany(mappedBy = "id.itemType")
+	@OneToMany(mappedBy = "id.item", fetch = FetchType.EAGER)
 	private List<ItemAttribute> attributes;
 
 	@JsonIgnore

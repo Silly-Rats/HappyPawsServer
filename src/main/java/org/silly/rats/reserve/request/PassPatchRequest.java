@@ -13,4 +13,5 @@ import java.util.List;
 public class PassPatchRequest {
 	private Integer passId;
 	private List<TrainingWrapper> times;
+	private Double price;
 }

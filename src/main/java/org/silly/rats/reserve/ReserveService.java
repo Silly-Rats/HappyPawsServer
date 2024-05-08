@@ -161,18 +161,18 @@ public class ReserveService {
 			}
 		}
 
-		createTrainingReserve(dog, trainer, pass, request.getTimes());
+		createTrainingReserve(dog, trainer, pass, request.getTimes(), request.getPrice());
 	}
 
 	private void reserveTrainingUnregistered(TrainingRequest request, Worker trainer) {
 		Dog dog = createDog(request);
-		createTrainingReserve(dog, trainer, null, request.getTimes());
+		createTrainingReserve(dog, trainer, null, request.getTimes(), request.getPrice());
 	}
 
-	private void createTrainingReserve(Dog dog, Worker trainer, Pass pass, List<LocalDateTime> times) {
+	private void createTrainingReserve(Dog dog, Worker trainer, Pass pass, List<LocalDateTime> times, Double price) {
 		for (LocalDateTime time : times) {
 			Reserve reserve = new Reserve(null, dog,
-					serviceRepository.findByName("Training"), time);
+					serviceRepository.findByName("Training"), time, price);
 			reserve = reserveRepository.save(reserve);
 
 			TrainingDetails trainingDetails = new TrainingDetails(reserve.getId(), null, pass, trainer.getUser());
@@ -238,6 +238,6 @@ public class ReserveService {
 			}
 		}
 
-		createTrainingReserve(dog, trainer, pass, newTrainings);
+		createTrainingReserve(dog, trainer, pass, newTrainings, request.getPrice());
 	}
 }

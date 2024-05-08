@@ -1,13 +1,14 @@
 package org.silly.rats.shop.item;
 
 import lombok.RequiredArgsConstructor;
+import org.silly.rats.shop.attribute.AttributeFilter;
+import org.silly.rats.shop.item.details.ItemAttribute;
 import org.silly.rats.shop.item.details.ItemImage;
 import org.silly.rats.shop.item.details.ItemImageRepository;
 import org.silly.rats.util.ImageUtil;
 import org.silly.rats.util.ImageWrapper;
 import org.springframework.stereotype.Service;
 
-import java.awt.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,20 +22,54 @@ public class ItemService {
 	private final ItemRepository itemRepository;
 	private final ItemImageRepository itemImageRepository;
 	private Integer currentCategory;
-	private List<Item> items;
+	private List<AttributeFilter> attributeFilters = new ArrayList<>();
+	private List<Item> items = new ArrayList<>();
+	private List<Item> filtered;
+
+	public void setFilters(List<AttributeFilter> attributeFilters) {
+		this.attributeFilters = attributeFilters;
+		filter();
+	}
+
+	private void filter() {
+		filtered = items.stream()
+				.filter(item -> {
+					for (AttributeFilter attributeFilter : attributeFilters) {
+						boolean contains = false;
+						for (Integer values : attributeFilter.getValues()) {
+							contains = contains || containsValue(item.getAttributes(), values);
+						}
+						if (!contains) {
+							return false;
+						}
+					}
+					return true;
+				})
+				.toList();
+	}
+
+	public boolean containsValue(List<ItemAttribute> attributes, Integer value) {
+		for (ItemAttribute itemAttribute : attributes) {
+			if (itemAttribute.getId().getAttributeValue().getId().equals(value)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	public ListWrapper getCategoryItem(Integer categoryId, Integer start, Integer limit) {
-		if (items == null || !currentCategory.equals(categoryId)) {
+		if (currentCategory == null || !currentCategory.equals(categoryId)) {
 			items = itemRepository.findByCategoryId(categoryId);
 			currentCategory = categoryId;
+			filter();
 		}
 
-		if (items.size() < start) {
+		if (filtered.size() < start) {
 			return new ListWrapper(new ArrayList<>(), false);
 		}
 
-		return new ListWrapper(items.subList(start, Math.min(start + limit, items.size())),
-				items.size() > start + limit);
+		return new ListWrapper(filtered.subList(start, Math.min(start + limit, filtered.size())),
+				filtered.size() > start + limit);
 	}
 
 	public Item getItem(Integer id) {

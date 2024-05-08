@@ -32,4 +32,5 @@ public class Reserve {
 
 	@Column(name = "reserve_time")
 	private LocalDateTime reserveTime;
+	private Double price;
 }

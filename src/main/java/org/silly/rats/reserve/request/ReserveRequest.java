@@ -24,4 +24,5 @@ public class ReserveRequest {
 	private String dogSize;
 
 	private LocalDateTime reserveTime;
+	private Double price;
 }

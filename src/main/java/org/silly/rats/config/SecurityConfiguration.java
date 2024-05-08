@@ -36,6 +36,7 @@ public class SecurityConfiguration {
 								"api/category/info",
 								"api/category/*/attr",
 								"api/category/*/img",
+								"api/item/filters",
 								"api/item/*/info",
 								"api/item/*/items",
 								"api/item/*/images",
