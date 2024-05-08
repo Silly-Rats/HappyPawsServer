@@ -1,12 +1,17 @@
 package org.silly.rats.reserve;
 
 import lombok.RequiredArgsConstructor;
+import org.silly.rats.reserve.grooming.GroomingDetails;
+import org.silly.rats.reserve.grooming.GroomingService;
+import org.silly.rats.reserve.hotel.HotelDetails;
+import org.silly.rats.reserve.hotel.HotelService;
 import org.silly.rats.reserve.request.PassPatchRequest;
 import org.silly.rats.reserve.request.ReserveRequest;
 import org.silly.rats.reserve.request.TrainingRequest;
 import org.silly.rats.reserve.service.ServiceRepository;
 import org.silly.rats.reserve.service.ServiceType;
 import org.silly.rats.reserve.training.Pass;
+import org.silly.rats.reserve.training.TrainingDetails;
 import org.silly.rats.reserve.training.TrainingService;
 import org.silly.rats.reserve.training.TrainingWrapper;
 import org.silly.rats.user.User;
@@ -31,6 +36,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ReserveService {
 	private final TrainingService trainingService;
+	private final GroomingService groomingService;
+	private final HotelService hotelService;
 
 	private final ServiceRepository serviceRepository;
 	private final ReserveRepository reserveRepository;
@@ -44,6 +51,40 @@ public class ReserveService {
 
 	public List<Reserve> getAllUserReserves(Integer id) {
 		return reserveRepository.findByUserId(id);
+	}
+
+	public TrainingDetails getTrainingDetails(Integer userId, Long id) {
+		if (!containsReserve(userId, id)) {
+			throw new IllegalArgumentException("User " + userId + " don't have reserve with id : " + id);
+		}
+		return trainingService.getTrainingDetails(id);
+	}
+
+	public GroomingDetails getGroomingDetails(Integer userId, Long id) {
+		if (!containsReserve(userId, id)) {
+			throw new IllegalArgumentException("User " + userId + " don't have reserve with id : " + id);
+		}
+		return groomingService.getGroomingDetails(id);
+	}
+
+	public HotelDetails getHotelDetails(Integer userId, Long id) {
+		if (!containsReserve(userId, id)) {
+			throw new IllegalArgumentException("User " + userId + " don't have reserve with id : " + id);
+		}
+		return hotelService.getHotelDetails(id);
+	}
+
+	private boolean containsReserve(Integer userId, Long reserveId) {
+		User user = userRepository.findById(userId).orElseThrow(() ->
+				new IllegalArgumentException("There is no user with id: " + userId));
+		for (Dog dog : user.getDogs()) {
+			for (Reserve reserve : dog.getReserves()) {
+				if (reserve.getId().equals(reserveId)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	public Map<LocalDate, List<String>> getFreeTrainerHours(Integer worker, LocalDateTime start, LocalDateTime end) {

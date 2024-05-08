@@ -23,6 +23,11 @@ public class TrainingService {
 	private final PassRepository passRepository;
 	private final WorkerRepository workerRepository;
 
+	public TrainingDetails getTrainingDetails(Long id) {
+		return trainingRepository.findById(id).orElseThrow(() ->
+				new IllegalArgumentException("There is no training with id: " + id));
+	}
+
 	public Map<LocalDate, List<String>> getFreeHours(Integer worker, LocalDateTime start, LocalDateTime end) {
 		List<TrainingDetails> details = trainingRepository.findWorkerInterval(worker, start, end.plusDays(1));
 		Map<LocalDate, List<Integer>> busy = new HashMap<>();

@@ -2,6 +2,8 @@ package org.silly.rats.reserve;
 
 import lombok.RequiredArgsConstructor;
 import org.silly.rats.config.JwtService;
+import org.silly.rats.reserve.grooming.GroomingDetails;
+import org.silly.rats.reserve.hotel.HotelDetails;
 import org.silly.rats.reserve.request.PassPatchRequest;
 import org.silly.rats.reserve.request.TrainingRequest;
 import org.silly.rats.reserve.training.Pass;
@@ -30,9 +32,23 @@ public class ReserveController {
 
 	@GetMapping(path = "/training/{id}")
 	public TrainingDetails getTrainingDetails(@RequestHeader(name = "Authorization", required = false) String token,
-											  @RequestParam Integer id) {
+											  @PathVariable Long id) {
 		Integer userId = extractId(token);
-		return null;
+		return reserveService.getTrainingDetails(userId, id);
+	}
+
+	@GetMapping(path = "/grooming/{id}")
+	public GroomingDetails getGroomingDetails(@RequestHeader(name = "Authorization", required = false) String token,
+											  @PathVariable Long id) {
+		Integer userId = extractId(token);
+		return reserveService.getGroomingDetails(userId, id);
+	}
+
+	@GetMapping(path = "/hotel/{id}")
+	public HotelDetails getHotelDetails(@RequestHeader(name = "Authorization", required = false) String token,
+										@PathVariable Long id) {
+		Integer userId = extractId(token);
+		return reserveService.getHotelDetails(userId, id);
 	}
 
 	@GetMapping(path = "/training/free/{worker}")
@@ -65,8 +81,7 @@ public class ReserveController {
 
 	@PatchMapping(path = "/training")
 	public void patchPass(@RequestHeader(name = "Authorization", required = false) String token,
-						  @RequestBody PassPatchRequest request)
-			throws AuthenticationException {
+						  @RequestBody PassPatchRequest request) {
 		Integer userId = extractId(token);
 		reserveService.patchPass(request, userId);
 	}

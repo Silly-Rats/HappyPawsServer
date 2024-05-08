@@ -1,6 +1,7 @@
 package org.silly.rats.reserve.grooming;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,7 +23,9 @@ public class GroomingProcedure {
 
 	private String name;
 	private Integer minutes;
-	private Double money;
+
+	@JsonIgnore
+	private Double price;
 
 	@OneToMany(mappedBy = "procedure")
 	@JsonBackReference
