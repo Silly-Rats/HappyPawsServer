@@ -55,4 +55,9 @@ public class Item {
 		}
 		return loadedImages;
 	}
+
+	@JsonIgnore
+	public String getMainImage() {
+		return ImageUtil.loadImage("img/item", images.get(0).getImageName());
+	}
 }

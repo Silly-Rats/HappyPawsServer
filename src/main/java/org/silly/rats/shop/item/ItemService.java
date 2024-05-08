@@ -92,6 +92,16 @@ public class ItemService {
 		return item.getImageWrappers();
 	}
 
+
+	public String getItemImage(Integer id) {
+		Item item = itemRepository.findById(id).orElse(null);
+		if (item == null) {
+			return null;
+		}
+
+		return item.getMainImage();
+	}
+
 	public void addItemImages(Integer id, List<String> images) {
 		Item item = itemRepository.findById(id).orElse(null);
 		if (item == null) {

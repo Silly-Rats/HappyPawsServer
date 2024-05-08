@@ -38,7 +38,7 @@ public class ImageUtil {
 			byte[] imageData = Base64.getDecoder().decode(image);
 			BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(imageData));
 			BufferedImage newImage = new BufferedImage(bufferedImage.getWidth(),
-					bufferedImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+					bufferedImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
 			newImage.getGraphics().drawImage(bufferedImage, 0, 0, null);
 			ImageIO.write(newImage, "png", new File(fileName));
