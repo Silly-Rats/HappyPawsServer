@@ -1,11 +1,14 @@
 package org.silly.rats.shop.order;
 
 import lombok.RequiredArgsConstructor;
-import org.silly.rats.shop.item.ItemRepository;
+import org.silly.rats.shop.item.details.ItemType;
 import org.silly.rats.shop.item.details.ItemTypeRepository;
+import org.silly.rats.shop.order.details.OrderDetailId;
 import org.silly.rats.shop.order.details.OrderDetailRepository;
 import org.silly.rats.shop.order.details.OrderItemDetails;
 import org.silly.rats.shop.order.details.OrderStatusRepository;
+import org.silly.rats.user.User;
+import org.silly.rats.user.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -16,7 +19,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OrderService {
 	private final OrderRepository orderRepository;
+	private final OrderDetailRepository orderDetailRepository;
 	private final OrderStatusRepository orderStatusRepository;
+	private final UserRepository userRepository;
+	private final ItemTypeRepository itemTypeRepository;
 
 	public List<Order> getNotCompletedOrders() {
 		Integer completed = orderStatusRepository.getIdByName("Completed");
@@ -30,6 +36,21 @@ public class OrderService {
 				.stream()
 				.map(UserOrder::new)
 				.toList();
+	}
+
+	public void addUserOrder(List<OrderRequest> request, Integer userId) {
+		User user = userRepository.findById(userId).orElseThrow(() ->
+				new IllegalArgumentException("There is no user with id: " + userId));
+		Order order = new Order(null, orderStatusRepository.findByName("Processing"),
+				user, LocalDateTime.now(), LocalDateTime.now(), null);
+		order = orderRepository.save(order);
+
+		for (OrderRequest item : request) {
+			ItemType itemType = itemTypeRepository.getReferenceById(item.getItem());
+			OrderItemDetails orderItemDetails = new OrderItemDetails(
+					new OrderDetailId(itemType, order), item.getQty());
+			orderDetailRepository.save(orderItemDetails);
+		}
 	}
 
 	public Order proceedOrder(Integer id) {

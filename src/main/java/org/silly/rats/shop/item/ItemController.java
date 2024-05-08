@@ -43,6 +43,11 @@ public class ItemController {
 		return itemService.getItemImages(id);
 	}
 
+	@GetMapping(path = "/{id}/image")
+	public String getItemImage(@PathVariable Integer id) {
+		return itemService.getItemImage(id);
+	}
+
 	@PatchMapping(path = "/{id}/images/add")
 	public void addItemImages(@RequestHeader(name = "Authorization") String token,
 											   @PathVariable Integer id,

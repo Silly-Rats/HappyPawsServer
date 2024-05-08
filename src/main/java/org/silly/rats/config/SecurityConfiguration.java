@@ -40,6 +40,7 @@ public class SecurityConfiguration {
 								"api/item/*/info",
 								"api/item/*/items",
 								"api/item/*/images",
+								"api/item/*/image",
 								"api/item/all/id")
 						.permitAll()
 						.anyRequest().authenticated())
