@@ -21,8 +21,7 @@ public class UserController {
 
 	@GetMapping(path = "/info")
 	public User getInfo(@RequestHeader(name = "Authorization") String token) {
-		token = token.substring(7);
-		Integer id = (Integer) jwtService.extractClaim(token, (c) -> c.get("id"));
+		Integer id = extractId(token);
 		return userService.getUserById(id);
 	}
 
@@ -35,15 +34,25 @@ public class UserController {
 	@PatchMapping(path = "/image")
 	public String saveImage(@RequestHeader(name = "Authorization") String token,
 						  @RequestBody String image) {
-		token = token.substring(7);
-		Integer id = (Integer) jwtService.extractClaim(token, (c) -> c.get("id"));
+		Integer id = extractId(token);
 		return userService.saveImage(id, image);
 	}
 
 	@GetMapping(path = "/image")
 	public String getImage(@RequestHeader(name = "Authorization") String token) {
-		token = token.substring(7);
-		Integer id = (Integer) jwtService.extractClaim(token, (c) -> c.get("id"));
+		Integer id = extractId(token);
 		return userService.getImage(id);
+	}
+
+	@PatchMapping
+	public void patchUser(@RequestHeader(name = "Authorization") String token,
+						  @RequestBody PatchUserRequest user) {
+		Integer id = extractId(token);
+		userService.patchUser(user, id);
+	}
+
+	private Integer extractId(String token) {
+		token = token.substring(7);
+		return (Integer) jwtService.extractClaim(token, (c) -> c.get("id"));
 	}
 }

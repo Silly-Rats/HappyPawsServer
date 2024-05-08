@@ -1,7 +1,6 @@
 package org.silly.rats.user;
 
 import lombok.RequiredArgsConstructor;
-import org.silly.rats.config.JwtService;
 import org.silly.rats.user.type.AccountTypeRepository;
 import org.silly.rats.user.worker.WorkerInfo;
 import org.silly.rats.util.ImageUtil;
@@ -49,5 +48,17 @@ public class UserService {
 		}
 
 		return user.getImage();
+	}
+
+	public void patchUser(PatchUserRequest request, Integer id) {
+		User user = userRepository.findById(id).orElseThrow(() ->
+				new IllegalArgumentException("User with id " + id + " not found"));
+
+		user.setFirstName(request.getFirstName());
+		user.setLastName(request.getLastName());
+		user.setDob(request.getDob());
+		user.setEmail(request.getEmail());
+		user.setPhoneNum(request.getPhoneNum());
+		userRepository.save(user);
 	}
 }
