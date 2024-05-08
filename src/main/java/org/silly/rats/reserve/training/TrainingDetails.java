@@ -7,11 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.silly.rats.reserve.Reserve;
-import org.silly.rats.reserve.ReserveDetails;
 import org.silly.rats.user.User;
 import org.silly.rats.user.worker.WorkerInfo;
-
-import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -19,7 +16,7 @@ import java.time.LocalDateTime;
 @Builder
 @Entity
 @Table(name = "training")
-public class TrainingDetails implements ReserveDetails {
+public class TrainingDetails {
 	@Id
 	private Long id;
 

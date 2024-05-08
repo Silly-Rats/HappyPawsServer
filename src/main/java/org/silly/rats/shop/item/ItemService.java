@@ -35,6 +35,9 @@ public class ItemService {
 		filtered = items.stream()
 				.filter(item -> {
 					for (AttributeFilter attributeFilter : attributeFilters) {
+						if (attributeFilter.getValues().isEmpty()) {
+							return true;
+						}
 						boolean contains = false;
 						for (Integer values : attributeFilter.getValues()) {
 							contains = contains || containsValue(item.getAttributes(), values);

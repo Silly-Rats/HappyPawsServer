@@ -1,5 +1,6 @@
 package org.silly.rats.reserve.service;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,5 +25,6 @@ public class ServiceType {
 	private String name;
 
 	@OneToMany(mappedBy = "service")
+	@JsonIgnore
 	private List<Reserve> reserves;
 }

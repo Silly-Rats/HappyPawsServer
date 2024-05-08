@@ -1,5 +1,6 @@
 package org.silly.rats.reserve;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,6 +25,7 @@ public class Reserve {
 
 	@ManyToOne
 	@JoinColumn(name = "dog_id")
+	@JsonIgnore
 	private Dog dog;
 
 	@ManyToOne
@@ -33,4 +35,8 @@ public class Reserve {
 	@Column(name = "reserve_time")
 	private LocalDateTime reserveTime;
 	private Double price;
+
+	public ReserveDog getDogInfo() {
+		return new ReserveDog(dog);
+	}
 }

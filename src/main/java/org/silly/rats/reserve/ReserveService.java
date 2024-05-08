@@ -1,13 +1,14 @@
 package org.silly.rats.reserve;
 
 import lombok.RequiredArgsConstructor;
-import org.silly.rats.reserve.grooming.GroomingRepository;
-import org.silly.rats.reserve.hotel.HotelRepository;
 import org.silly.rats.reserve.request.PassPatchRequest;
 import org.silly.rats.reserve.request.ReserveRequest;
 import org.silly.rats.reserve.request.TrainingRequest;
-import org.silly.rats.reserve.training.*;
 import org.silly.rats.reserve.service.ServiceRepository;
+import org.silly.rats.reserve.service.ServiceType;
+import org.silly.rats.reserve.training.Pass;
+import org.silly.rats.reserve.training.TrainingService;
+import org.silly.rats.reserve.training.TrainingWrapper;
 import org.silly.rats.user.User;
 import org.silly.rats.user.UserRepository;
 import org.silly.rats.user.dog.Dog;
@@ -17,90 +18,94 @@ import org.silly.rats.user.dog.breed.BreedRepository;
 import org.silly.rats.user.dog.breed.OtherBreed;
 import org.silly.rats.user.dog.breed.OtherBreedRepository;
 import org.silly.rats.user.type.AccountTypeRepository;
-import org.silly.rats.user.worker.Worker;
-import org.silly.rats.user.worker.WorkerRepository;
 import org.springframework.stereotype.Service;
 
 import javax.naming.AuthenticationException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class ReserveService {
+	private final TrainingService trainingService;
+
 	private final ServiceRepository serviceRepository;
 	private final ReserveRepository reserveRepository;
-	private final TrainingRepository trainingRepository;
-	private final GroomingRepository groomingRepository;
-	private final HotelRepository hotelRepository;
-	private final PassRepository passRepository;
 
 	private final DogRepository dogRepository;
 	private final BreedRepository breedRepository;
 	private final OtherBreedRepository otherBreedRepository;
 
 	private final UserRepository userRepository;
-	private final WorkerRepository workerRepository;
 	private final AccountTypeRepository accountTypeRepository;
 
+	public List<Reserve> getAllUserReserves(Integer id) {
+		return reserveRepository.findByUserId(id);
+	}
+
 	public Map<LocalDate, List<String>> getFreeTrainerHours(Integer worker, LocalDateTime start, LocalDateTime end) {
-		List<TrainingDetails> details = trainingRepository.findWorkerInterval(worker, start, end.plusDays(1));
-		Map<LocalDate, List<Integer>> busy = new HashMap<>();
-		for (TrainingDetails detail : details) {
-			busy.merge(detail.getReserve().getReserveTime().toLocalDate(),
-					new ArrayList<>(List.of(detail.getReserve().getReserveTime().getHour())),
-					(o, n) -> {
-						o.addAll(n);
-						return o;
-					});
-		}
-
-		Map<LocalDate, List<String>> available = new HashMap<>();
-		for (LocalDateTime date = start; date.isBefore(end); date = date.plusDays(1)) {
-			for (int i = 9; i <= 18; i++) {
-				if (i == 13) {
-					continue;
-				}
-				addToMap(available, busy, date.toLocalDate(), i);
-			}
-		}
-
-		int max = Math.min(end.getHour(), 18);
-		for (int i = 9; i <= max; i++) {
-			addToMap(available, busy, end.toLocalDate(), i);
-		}
-
-		return available;
+		return trainingService.getFreeHours(worker, start, end);
 	}
 
 	public List<Pass> getDogPasses(Integer dogId, Integer userId)
 			throws AuthenticationException {
 		Dog dog = getUserDog(dogId, userId);
-
-		return passRepository.findByDogId(dogId);
+		return trainingService.getDogPasses(dog.getId());
 	}
 
-	private void addToMap(Map<LocalDate, List<String>> available,
-						  Map<LocalDate, List<Integer>> busy, LocalDate key, int i) {
-		if (i == 13) {
-			return;
+	public void reserveTraining(TrainingRequest request, Integer userId)
+			throws AuthenticationException {
+		Dog dog;
+		if (request.getDogId() == null) {
+			dog = createDog(request);
+			request.setNeedPass(false);
+		} else {
+			dog = getDog(request, userId);
 		}
-		if (!busy.containsKey(key) || !busy.get(key).contains(i)) {
-			available.merge(key, new ArrayList<>(List.of("%02d:00".formatted(i))), (o, n) -> {
-				o.addAll(n);
-				return o;
-			});
+
+		List<Long> reserves = new ArrayList<>(request.getTimes().size());
+		for (LocalDateTime time : request.getTimes()) {
+			Reserve reserve = createReserves(dog,
+					serviceRepository.findByName("training"), time, request.getPrice());
+			reserves.add(reserve.getId());
+			trainingService.createReserves(reserves, dog, request);
 		}
+	}
+
+	public void patchPass(PassPatchRequest request, Integer userId) {
+		Pass pass = trainingService.getPass(request.getPassId());
+		Dog dog = pass.getDog();
+		if (!dog.getUser().getId().equals(userId)) {
+			throw new IllegalArgumentException("User don't have this dog: id =" + dog.getId());
+		}
+
+		List<Long> reserves = new ArrayList<>(request.getTimes().size());
+		for (TrainingWrapper wrapper : request.getTimes()) {
+			if (wrapper.getId() == null) {
+				Reserve reserve = createReserves(dog, serviceRepository.findByName("training"),
+						wrapper.getTime(), request.getPrice());
+				reserves.add(reserve.getId());
+			} else {
+				Reserve reserve = trainingService.getReserve(wrapper.getId(), pass);
+				reserve.setReserveTime(wrapper.getTime());
+				reserveRepository.save(reserve);
+			}
+		}
+
+		trainingService.createReserves(reserves, dog, pass.getTrainer(), pass);
+	}
+
+	private Reserve createReserves(Dog dog, ServiceType service, LocalDateTime time, Double price) {
+		return reserveRepository.save(new Reserve(null, dog, service, time, price));
 	}
 
 	private Dog getDog(ReserveRequest request, Integer userId)
-			throws Exception {
+			throws AuthenticationException {
 		if (request.getDogId() == null) {
-			throw new RuntimeException("Dog Id must be specified");
+			throw new IllegalArgumentException("Dog Id must be specified");
 		}
 		return getUserDog(request.getDogId(), userId);
 	}
@@ -123,61 +128,6 @@ public class ReserveService {
 		}
 
 		return null;
-	}
-
-	public void reserveTraining(TrainingRequest request, Integer userId)
-			throws Exception {
-		Pass pass = null;
-		Worker trainer;
-		if (request.getPassId() != null) {
-			pass = passRepository.findById(request.getPassId()).orElse(null);
-			trainer = pass.getTrainer().getWorkerDetails();
-		} else {
-			trainer = getWorker(request.getTrainerId(), "trainer");
-		}
-
-		if (userId != null) {
-			reserveTrainingRegistered(request, pass, trainer, userId);
-		} else {
-			reserveTrainingUnregistered(request, trainer);
-		}
-	}
-
-	private Worker getWorker(Integer workerId, String type) {
-		Worker worker = workerRepository.findById(workerId).orElse(null);
-		if (worker == null || !worker.getUser().getType().equals(type)) {
-			throw new RuntimeException("There is no such " + type + ": id = " + workerId);
-		}
-		return worker;
-	}
-
-	private void reserveTrainingRegistered(TrainingRequest request, Pass pass, Worker trainer, Integer userId)
-			throws Exception {
-		Dog dog = getDog(request, userId);
-
-		if (pass == null) {
-			if (request.getNeedPass()) {
-				pass = passRepository.save(new Pass(null, dog, trainer.getUser(), null, false));
-			}
-		}
-
-		createTrainingReserve(dog, trainer, pass, request.getTimes(), request.getPrice());
-	}
-
-	private void reserveTrainingUnregistered(TrainingRequest request, Worker trainer) {
-		Dog dog = createDog(request);
-		createTrainingReserve(dog, trainer, null, request.getTimes(), request.getPrice());
-	}
-
-	private void createTrainingReserve(Dog dog, Worker trainer, Pass pass, List<LocalDateTime> times, Double price) {
-		for (LocalDateTime time : times) {
-			Reserve reserve = new Reserve(null, dog,
-					serviceRepository.findByName("Training"), time, price);
-			reserve = reserveRepository.save(reserve);
-
-			TrainingDetails trainingDetails = new TrainingDetails(reserve.getId(), null, pass, trainer.getUser());
-			trainingRepository.save(trainingDetails);
-		}
 	}
 
 	private Dog createDog(ReserveRequest request) {
@@ -214,30 +164,5 @@ public class ReserveService {
 		}
 
 		return dog;
-	}
-
-	public void patchPass(PassPatchRequest request) {
-		Pass pass = passRepository.findById(request.getPassId())
-				.orElseThrow(() -> new RuntimeException("There is id with id: " + request.getPassId()));
-		Dog dog = pass.getDog();
-		Worker trainer = pass.getTrainer().getWorkerDetails();
-
-		List<LocalDateTime> newTrainings = new ArrayList<>();
-		for (TrainingWrapper wrapper : request.getTimes()) {
-			if (wrapper.getId() != null) {
-				TrainingDetails training = trainingRepository.findById(wrapper.getId()).orElse(null);
-				if (!pass.getTrainings().contains(training)) {
-					throw new RuntimeException("Pass don't contains reserve with id: " + wrapper.getId());
-				}
-
-				Reserve reserve = training.getReserve();
-				reserve.setReserveTime(wrapper.getTime());
-				reserveRepository.save(reserve);
-			} else {
-				newTrainings.add(wrapper.getTime());
-			}
-		}
-
-		createTrainingReserve(dog, trainer, pass, newTrainings, request.getPrice());
 	}
 }
