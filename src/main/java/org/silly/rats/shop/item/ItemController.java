@@ -2,6 +2,7 @@ package org.silly.rats.shop.item;
 
 import lombok.RequiredArgsConstructor;
 import org.silly.rats.config.JwtService;
+import org.silly.rats.shop.item.details.ItemType;
 import org.silly.rats.util.ImageWrapper;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,6 +36,11 @@ public class ItemController {
 	@GetMapping(path = "/{id}/info")
 	public Item getItem(@PathVariable Integer id) {
 		return itemService.getItem(id);
+	}
+
+	@GetMapping(path = "/type/{id}/info")
+	public ItemType getItemType(@PathVariable Integer id) {
+		return itemService.getItemType(id);
 	}
 
 	@GetMapping(path = "/{id}/images")
