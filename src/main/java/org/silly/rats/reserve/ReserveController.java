@@ -25,9 +25,13 @@ public class ReserveController {
 	private final JwtService jwtService;
 
 	@GetMapping(path = "/all")
-	public List<Reserve> getUserReserves(@RequestHeader(name = "Authorization", required = false) String token) {
+	public List<Reserve> getUserReserves(@RequestHeader(name = "Authorization", required = false) String token,
+										 @RequestParam String sortBy,
+										 @RequestParam Boolean asc,
+										 @RequestParam String type,
+										 @RequestParam(required = false) Boolean completed) {
 		Integer userId = extractId(token);
-		return reserveService.getAllUserReserves(userId);
+		return reserveService.getAllUserReserves(userId, sortBy, asc, type, completed);
 	}
 
 	@GetMapping(path = "/training/{id}")

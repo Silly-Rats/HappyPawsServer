@@ -40,7 +40,7 @@ public class Item {
 	@JsonIgnore
 	private List<ItemImage> images;
 
-	@OneToMany(mappedBy = "item")
+	@OneToMany(mappedBy = "item", fetch = FetchType.EAGER)
 	private List<ItemType> types;
 
 	@OneToMany(mappedBy = "id.item", fetch = FetchType.EAGER)
@@ -59,5 +59,39 @@ public class Item {
 	@JsonIgnore
 	public String getMainImage() {
 		return ImageUtil.loadImage("img/item", images.get(0).getImageName());
+	}
+
+	@JsonIgnore
+	public Double getPrice() {
+		return types.stream()
+				.filter(type -> type.getQty() > 0)
+				.mapToDouble(ItemType::getPrice)
+				.min().orElse(0.0);
+	}
+
+	public boolean isNameContains(String part) {
+		if (part == null) {
+			return true;
+		}
+		part = part.toLowerCase();
+		if (name.toLowerCase().contains(part)) {
+			return true;
+		}
+		for (ItemType type : types) {
+			if (type.getName().toLowerCase().contains(part)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean isPriceInRange(Double from, Double to) {
+		for (ItemType type : types) {
+			if ((from == null || type.getPrice() >= from) &&
+					(to == null || type.getPrice() <= to)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

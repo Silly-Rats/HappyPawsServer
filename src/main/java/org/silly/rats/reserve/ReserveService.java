@@ -29,6 +29,7 @@ import javax.naming.AuthenticationException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -49,8 +50,34 @@ public class ReserveService {
 	private final UserRepository userRepository;
 	private final AccountTypeRepository accountTypeRepository;
 
-	public List<Reserve> getAllUserReserves(Integer id) {
-		return reserveRepository.findByUserId(id);
+	public List<Reserve> getAllUserReserves(Integer id, String sortBy, Boolean asc,
+											String type, Boolean completed) {
+		ServiceType serviceType = serviceRepository.findByName(type);
+		Comparator<Reserve> comparator = Comparator.comparing(Reserve::getReserveTime);
+		if (sortBy.equals("price")) {
+			comparator = Comparator.comparing(Reserve::getPrice);
+		} else if (sortBy.equals("dog")) {
+			comparator = Comparator.comparing(a -> a.getDog().getName());
+		}
+
+		if (!asc) {
+			comparator = comparator.reversed();
+		}
+
+		return reserveRepository.findByUserId(id)
+				.stream()
+				.filter(r -> {
+					if (completed != null && r.isCompleted() != completed) {
+						return false;
+					}
+					if (serviceType != null && !r.getService().equals(serviceType)) {
+						return false;
+					}
+
+					return true;
+				})
+				.sorted(comparator)
+				.toList();
 	}
 
 	public TrainingDetails getTrainingDetails(Integer userId, Long id) {
