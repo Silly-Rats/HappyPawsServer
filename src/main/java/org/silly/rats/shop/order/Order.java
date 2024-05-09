@@ -45,4 +45,12 @@ public class Order {
 	public String getStatus() {
 		return status.getName();
 	}
+
+	public double getTotalPrice() {
+		double total = 0;
+		for (OrderItemDetails detail : details) {
+			total += detail.getQty() * detail.getItem().getPrice();
+		}
+		return total;
+	}
 }

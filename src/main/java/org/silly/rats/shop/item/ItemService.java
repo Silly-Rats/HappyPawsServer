@@ -1,9 +1,7 @@
 package org.silly.rats.shop.item;
 
 import lombok.RequiredArgsConstructor;
-import org.silly.rats.shop.item.details.ItemAttribute;
-import org.silly.rats.shop.item.details.ItemImage;
-import org.silly.rats.shop.item.details.ItemImageRepository;
+import org.silly.rats.shop.item.details.*;
 import org.silly.rats.util.ImageUtil;
 import org.silly.rats.util.ImageWrapper;
 import org.springframework.stereotype.Service;
@@ -19,6 +17,7 @@ import java.util.*;
 public class ItemService {
 	private final ItemRepository itemRepository;
 	private final ItemImageRepository itemImageRepository;
+	private final ItemTypeRepository itemTypeRepository;
 	private Integer currentCategory;
 	private Map<Integer, List<Integer>> attributeFilters = new HashMap<>();
 	private List<Item> items = new ArrayList<>();
@@ -36,7 +35,9 @@ public class ItemService {
 
 		if (request.getSortBy().equals("price")) {
 			comparator = Comparator.comparingDouble(Item::getPrice);
-		} else if (request.getSortBy().equals("date")) {
+		} else if (request.getSortBy().equals("name")) {
+			comparator = Comparator.comparing(Item::getName);
+		} else {
 			comparator = Comparator.comparingInt(Item::getId);
 		}
 
@@ -94,7 +95,13 @@ public class ItemService {
 	}
 
 	public Item getItem(Integer id) {
-		return itemRepository.findById(id).orElse(null);
+		return itemRepository.findById(id).orElseThrow(() ->
+				new IllegalArgumentException("There is no item with id: " + id));
+	}
+
+	public ItemType getItemType(Integer id) {
+		return itemTypeRepository.findById(id).orElseThrow(() ->
+				new IllegalArgumentException("There is no item type with id: " + id));
 	}
 
 	public List<Integer> getItemIds() {
