@@ -21,10 +21,7 @@ public class CategoryItem {
 		this.id = item.getId();
 		this.name = item.getName();
 		this.description = item.getDescription();
-		this.price = item.getTypes().stream()
-				.filter(type -> type.getQty() > 0)
-				.mapToDouble(ItemType::getPrice)
-				.min().orElse(0.0);
+		this.price = item.getPrice();
 
 		this.available = false;
 		for (ItemType itemType : item.getTypes()) {

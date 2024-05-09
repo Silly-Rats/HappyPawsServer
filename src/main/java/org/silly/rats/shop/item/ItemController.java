@@ -2,7 +2,6 @@ package org.silly.rats.shop.item;
 
 import lombok.RequiredArgsConstructor;
 import org.silly.rats.config.JwtService;
-import org.silly.rats.shop.attribute.AttributeFilter;
 import org.silly.rats.util.ImageWrapper;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +23,7 @@ public class ItemController {
 	}
 
 	@PostMapping(path = "/filters")
-	public void setFilters(@RequestBody List<AttributeFilter> filters) {
+	public void setFilters(@RequestBody FilterRequest filters) {
 		itemService.setFilters(filters);
 	}
 
