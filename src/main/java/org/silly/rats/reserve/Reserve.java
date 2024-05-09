@@ -39,4 +39,9 @@ public class Reserve {
 	public ReserveDog getDogInfo() {
 		return new ReserveDog(dog);
 	}
+
+	@JsonIgnore
+	public boolean isCompleted() {
+		return LocalDateTime.now().isAfter(reserveTime);
+	}
 }
