@@ -29,10 +29,16 @@ public class ItemType {
 	@JsonBackReference
 	private Item item;
 	private String name;
+
+	@JsonIgnore
 	private Integer qty;
 	private Double price;
 
 	@OneToMany(mappedBy = "id.item")
 	@JsonIgnore
 	private List<OrderItemDetails> orders;
+
+	public ItemWrapper getItemInfo() {
+		return new ItemWrapper(item);
+	}
 }
