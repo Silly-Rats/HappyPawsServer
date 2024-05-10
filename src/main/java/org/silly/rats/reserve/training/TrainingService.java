@@ -3,7 +3,6 @@ package org.silly.rats.reserve.training;
 import lombok.RequiredArgsConstructor;
 import org.silly.rats.reserve.Reserve;
 import org.silly.rats.reserve.request.TrainingRequest;
-import org.silly.rats.user.User;
 import org.silly.rats.user.dog.Dog;
 import org.silly.rats.user.worker.Worker;
 import org.silly.rats.user.worker.WorkerRepository;
@@ -59,8 +58,17 @@ public class TrainingService {
 	}
 
 	public Pass getPass(Integer id) {
+		if (id == null) {
+			return null;
+		}
 		return passRepository.findById(id).orElseThrow(() ->
 				new IllegalArgumentException("No pass found with id: " + id));
+	}
+
+	public List<TrainingDetails> getTrainingReserves(Integer id, LocalDate date) {
+		LocalDateTime start = date.atStartOfDay();
+		LocalDateTime end = date.plusDays(1).atStartOfDay();
+		return trainingRepository.findWorkerInterval(id, start, end);
 	}
 
 	public List<Pass> getDogPasses(Integer dogId) {
@@ -80,12 +88,8 @@ public class TrainingService {
 			}
 		}
 
-		createReserves(ids, dog, trainer.getUser(), pass);
-	}
-
-	public void createReserves(List<Long> ids, Dog dog, User trainer, Pass pass) {
 		for (Long id : ids) {
-			TrainingDetails trainingDetails = new TrainingDetails(id, null, pass, trainer);
+			TrainingDetails trainingDetails = new TrainingDetails(id, null, pass, trainer.getUser());
 			trainingRepository.save(trainingDetails);
 		}
 	}
@@ -97,7 +101,6 @@ public class TrainingService {
 		}
 		return worker;
 	}
-
 
 	private void addToMap(Map<LocalDate, List<String>> available,
 						  Map<LocalDate, List<Integer>> busy, LocalDate key, int i) {

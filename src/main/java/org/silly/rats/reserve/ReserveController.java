@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.silly.rats.config.JwtService;
 import org.silly.rats.reserve.grooming.GroomingDetails;
 import org.silly.rats.reserve.hotel.HotelDetails;
-import org.silly.rats.reserve.request.PassPatchRequest;
 import org.silly.rats.reserve.request.TrainingRequest;
 import org.silly.rats.reserve.training.Pass;
 import org.silly.rats.reserve.training.TrainingDetails;
@@ -26,12 +25,13 @@ public class ReserveController {
 
 	@GetMapping(path = "/all")
 	public List<Reserve> getUserReserves(@RequestHeader(name = "Authorization", required = false) String token,
+										 @RequestParam String search,
 										 @RequestParam String sortBy,
 										 @RequestParam Boolean asc,
 										 @RequestParam String type,
 										 @RequestParam(required = false) Boolean completed) {
 		Integer userId = extractId(token);
-		return reserveService.getAllUserReserves(userId, sortBy, asc, type, completed);
+		return reserveService.getAllUserReserves(userId, search, sortBy, asc, type, completed);
 	}
 
 	@GetMapping(path = "/training/{id}")
@@ -63,6 +63,18 @@ public class ReserveController {
 		return reserveService.getFreeTrainerHours(worker, start, end);
 	}
 
+	@GetMapping(path = "/training/worker")
+	public List<TrainingDetails> getTrainerReserves(@RequestHeader(name = "Authorization", required = false) String token,
+													@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate date)
+			throws AuthenticationException {
+		Integer id = extractId(token);
+		if (!isType(token, "trainer")) {
+			throw new AuthenticationException("User is not a trainer");
+		}
+
+		return reserveService.getTrainingReserves(id, date);
+	}
+
 	@GetMapping(path = "/training/pass/{dog}")
 	public List<Pass> getPass(@RequestHeader(name = "Authorization") String token,
 							  @PathVariable Integer dog)
@@ -83,15 +95,14 @@ public class ReserveController {
 		reserveService.reserveTraining(request, userId);
 	}
 
-	@PatchMapping(path = "/training")
-	public void patchPass(@RequestHeader(name = "Authorization", required = false) String token,
-						  @RequestBody PassPatchRequest request) {
-		Integer userId = extractId(token);
-		reserveService.patchPass(request, userId);
-	}
-
 	private Integer extractId(String token) {
 		token = token.substring(7);
 		return (Integer) jwtService.extractClaim(token, (c) -> c.get("id"));
+	}
+
+	private boolean isType(String token, String type) {
+		token = token.substring(7);
+		return jwtService.extractClaim(token, (c) -> c.get("type"))
+				.equals(type);
 	}
 }

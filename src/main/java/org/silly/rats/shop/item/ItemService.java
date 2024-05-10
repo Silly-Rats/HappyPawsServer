@@ -50,6 +50,8 @@ public class ItemService {
 
 	private void filter() {
 		filtered = items.stream()
+				.filter(item -> item.isPriceInRange(from, to))
+				.filter(item -> item.isNameContains(namePart))
 				.filter(item -> {
 					for (List<Integer> attributeFilter : attributeFilters.values()) {
 						if (attributeFilter.isEmpty()) {
@@ -63,8 +65,7 @@ public class ItemService {
 							return false;
 						}
 					}
-					return item.isNameContains(namePart) &&
-							item.isPriceInRange(from, to);
+					return true;
 				})
 				.sorted(comparator)
 				.toList();

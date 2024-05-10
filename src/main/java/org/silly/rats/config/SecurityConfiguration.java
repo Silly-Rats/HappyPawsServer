@@ -27,7 +27,7 @@ public class SecurityConfiguration {
 				.authorizeHttpRequests((auth) -> auth
 						.requestMatchers("api/auth/register",
 								"api/auth/authenticate",
-								"api/user/worker/",
+								"api/user/worker/*",
 								"api/dog/breeds",
 								"api/reserve/training/free/*",
 								"api/reserve/training/pass/*",
@@ -58,11 +58,11 @@ public class SecurityConfiguration {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/api/**")
-						.allowedOrigins("http://localhost:63343",
+						.allowedOrigins("http://localhost:8000",
+								"http://localhost:63343",
 								"http://localhost:63342",
 								"http://127.0.0.1:5500",
-								"http://127.0.0.1:5501",
-								"http://localhost:8000")
+								"http://127.0.0.1:5501")
 						.allowedMethods("*")
 						.allowedHeaders("*")
 						.allowCredentials(true);

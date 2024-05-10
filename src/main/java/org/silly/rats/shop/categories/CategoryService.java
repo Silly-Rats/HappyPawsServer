@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
 import org.silly.rats.shop.attribute.Attribute;
 import org.silly.rats.shop.attribute.AttributeRepository;
-import org.silly.rats.shop.item.Item;
-import org.silly.rats.shop.item.ItemRepository;
 import org.silly.rats.util.ImageUtil;
 import org.springframework.stereotype.Service;
 
@@ -47,10 +45,9 @@ public class CategoryService {
 	}
 
 	public String getCategoryImage(Integer id) {
-		if (currentCategory == null || !currentCategory.getId().equals(id)) {
-			getCategory(id);
-		}
-		return ImageUtil.loadImage("img/category", currentCategory.getImageName());
+		Category category = categoryRepository.findById(id).orElseThrow(() ->
+				new IllegalArgumentException("There is no category with id: " + id));
+		return ImageUtil.loadImage("img/category", category.getImageName());
 	}
 
 	private Category lookCategoryDown(Category category, Integer id) {
@@ -69,7 +66,7 @@ public class CategoryService {
 		return null;
 	}
 
-	public List<Category> getAllCategories() {
-		return categoryRepository.findAllBasic();
+	public Category getAllCategories() {
+		return new Category(null, null, null, null, categoryRepository.findAllBasic(), null, null);
 	}
 }

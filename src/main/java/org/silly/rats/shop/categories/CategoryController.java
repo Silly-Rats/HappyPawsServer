@@ -21,7 +21,7 @@ public class CategoryController {
 	}
 
 	@GetMapping(path = "/info")
-	public List<Category> getAllCategories() {
+	public Category getAllCategories() {
 		return categoryService.getAllCategories();
 	}
 
