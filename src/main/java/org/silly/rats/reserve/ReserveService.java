@@ -5,7 +5,6 @@ import org.silly.rats.reserve.grooming.GroomingDetails;
 import org.silly.rats.reserve.grooming.GroomingService;
 import org.silly.rats.reserve.hotel.HotelDetails;
 import org.silly.rats.reserve.hotel.HotelService;
-import org.silly.rats.reserve.request.PassPatchRequest;
 import org.silly.rats.reserve.request.ReserveRequest;
 import org.silly.rats.reserve.request.TrainingRequest;
 import org.silly.rats.reserve.service.ServiceRepository;
@@ -32,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -50,8 +50,8 @@ public class ReserveService {
 	private final UserRepository userRepository;
 	private final AccountTypeRepository accountTypeRepository;
 
-	public List<Reserve> getAllUserReserves(Integer id, String sortBy, Boolean asc,
-											String type, Boolean completed) {
+	public List<Reserve> getAllUserReserves(Integer userId, String search, String sortBy,
+											Boolean asc, String type, Boolean completed) {
 		ServiceType serviceType = serviceRepository.findByName(type);
 		Comparator<Reserve> comparator = Comparator.comparing(Reserve::getReserveTime);
 		if (sortBy.equals("price")) {
@@ -64,20 +64,16 @@ public class ReserveService {
 			comparator = comparator.reversed();
 		}
 
-		return reserveRepository.findByUserId(id)
-				.stream()
-				.filter(r -> {
-					if (completed != null && r.isCompleted() != completed) {
-						return false;
-					}
-					if (serviceType != null && !r.getService().equals(serviceType)) {
-						return false;
-					}
+		Stream<Reserve> stream = reserveRepository.findByUserId(userId).stream();
+		if (completed != null) {
+			stream = stream.filter(r -> r.isCompleted() == completed);
+		}
+		if (serviceType != null) {
+			stream = stream.filter(r -> r.getService().equals(serviceType));
+		}
+		stream = stream.filter(r -> r.getId().toString().contains(search));
 
-					return true;
-				})
-				.sorted(comparator)
-				.toList();
+		return stream.sorted(comparator).toList();
 	}
 
 	public TrainingDetails getTrainingDetails(Integer userId, Long id) {
@@ -135,26 +131,11 @@ public class ReserveService {
 		}
 
 		List<Long> reserves = new ArrayList<>(request.getTimes().size());
-		for (LocalDateTime time : request.getTimes()) {
-			Reserve reserve = createReserves(dog,
-					serviceRepository.findByName("training"), time, request.getPrice());
-			reserves.add(reserve.getId());
-			trainingService.createReserves(reserves, dog, request);
-		}
-	}
-
-	public void patchPass(PassPatchRequest request, Integer userId) {
+		ServiceType type = serviceRepository.findByName("training");
 		Pass pass = trainingService.getPass(request.getPassId());
-		Dog dog = pass.getDog();
-		if (!dog.getUser().getId().equals(userId)) {
-			throw new IllegalArgumentException("User don't have this dog: id =" + dog.getId());
-		}
-
-		List<Long> reserves = new ArrayList<>(request.getTimes().size());
 		for (TrainingWrapper wrapper : request.getTimes()) {
 			if (wrapper.getId() == null) {
-				Reserve reserve = createReserves(dog, serviceRepository.findByName("training"),
-						wrapper.getTime(), request.getPrice());
+				Reserve reserve = createReserves(dog, type, wrapper.getTime(), request.getPrice());
 				reserves.add(reserve.getId());
 			} else {
 				Reserve reserve = trainingService.getReserve(wrapper.getId(), pass);
@@ -163,7 +144,11 @@ public class ReserveService {
 			}
 		}
 
-		trainingService.createReserves(reserves, dog, pass.getTrainer(), pass);
+		trainingService.createReserves(reserves, dog, request);
+	}
+
+	public List<TrainingDetails> getTrainingReserves(Integer id, LocalDate date) {
+		return trainingService.getTrainingReserves(id, date);
 	}
 
 	private Reserve createReserves(Dog dog, ServiceType service, LocalDateTime time, Double price) {

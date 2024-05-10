@@ -1,5 +1,6 @@
 package org.silly.rats.shop.order;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,6 +28,7 @@ public class Order {
 
 	@ManyToOne
 	@JoinColumn(name = "status")
+	@JsonIgnore
 	private OrderStatus status;
 
 	@ManyToOne
@@ -42,7 +44,15 @@ public class Order {
 	@OneToMany(mappedBy = "id.order")
 	private List<OrderItemDetails> details = new ArrayList<>();
 
-	public String getStatus() {
+	public String getStatusName() {
 		return status.getName();
+	}
+
+	public double getTotalPrice() {
+		double total = 0;
+		for (OrderItemDetails detail : details) {
+			total += detail.getQty() * detail.getItem().getPrice();
+		}
+		return total;
 	}
 }

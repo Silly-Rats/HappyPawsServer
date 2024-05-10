@@ -58,6 +58,9 @@ public class Item {
 
 	@JsonIgnore
 	public String getMainImage() {
+		if (images.isEmpty()) {
+			return null;
+		}
 		return ImageUtil.loadImage("img/item", images.get(0).getImageName());
 	}
 
@@ -78,7 +81,7 @@ public class Item {
 			return true;
 		}
 		for (ItemType type : types) {
-			if (type.getName().toLowerCase().contains(part)) {
+			if ((name + " " + type.getName()).toLowerCase().contains(part)) {
 				return true;
 			}
 		}

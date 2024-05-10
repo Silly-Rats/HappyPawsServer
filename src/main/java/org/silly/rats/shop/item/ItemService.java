@@ -35,7 +35,9 @@ public class ItemService {
 
 		if (request.getSortBy().equals("price")) {
 			comparator = Comparator.comparingDouble(Item::getPrice);
-		} else if (request.getSortBy().equals("date")) {
+		} else if (request.getSortBy().equals("name")) {
+			comparator = Comparator.comparing(Item::getName);
+		} else {
 			comparator = Comparator.comparingInt(Item::getId);
 		}
 
@@ -48,6 +50,8 @@ public class ItemService {
 
 	private void filter() {
 		filtered = items.stream()
+				.filter(item -> item.isPriceInRange(from, to))
+				.filter(item -> item.isNameContains(namePart))
 				.filter(item -> {
 					for (List<Integer> attributeFilter : attributeFilters.values()) {
 						if (attributeFilter.isEmpty()) {
@@ -61,8 +65,7 @@ public class ItemService {
 							return false;
 						}
 					}
-					return item.isNameContains(namePart) &&
-							item.isPriceInRange(from, to);
+					return true;
 				})
 				.sorted(comparator)
 				.toList();

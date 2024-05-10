@@ -16,7 +16,7 @@ public class UserOrder {
 
 	public UserOrder(Order order) {
 		this.id = order.getId();
-		this.status = order.getStatus();
+		this.status = order.getStatusName();
 		this.orderDate = order.getOrderDate();
 		this.changeDate = order.getChangeDate();
 		this.details = order.getDetails();
