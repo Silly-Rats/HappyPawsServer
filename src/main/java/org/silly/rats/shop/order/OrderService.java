@@ -12,8 +12,10 @@ import org.silly.rats.user.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -24,11 +26,39 @@ public class OrderService {
 	private final UserRepository userRepository;
 	private final ItemTypeRepository itemTypeRepository;
 
-	public List<Order> getNotCompletedOrders() {
-		Integer completed = orderStatusRepository.getIdByName("Completed");
-		Integer cancelled = orderStatusRepository.getIdByName("Cancelled");
+	public List<Order> getOrders(String orderId, String status, String sortBy, Boolean asc) {
+		Comparator<Order> comparator = Comparator.comparing(Order::getId);
+		if (sortBy.equals("status")) {
+			comparator = Comparator.comparing(o -> o.getStatus().getId());
+		} else if (sortBy.equals("order date")) {
+			comparator = Comparator.comparing(Order::getOrderDate);
+		} else if (sortBy.equals("change date")) {
+			comparator = Comparator.comparing(Order::getChangeDate);
+		} else if (sortBy.equals("price")) {
+			comparator = Comparator.comparing(Order::getTotalPrice);
+		}
 
-		return orderRepository.findNotCompleted(completed, cancelled);
+		if (!asc) {
+			comparator = comparator.reversed();
+		}
+
+		Stream<Order> stream;
+		if (status.equals("Not completed")) {
+			Byte completed = orderStatusRepository.getIdByName("Completed");
+			Byte cancelled = orderStatusRepository.getIdByName("Cancelled");
+			stream = orderRepository
+					.findNotCompleted(completed, cancelled)
+					.stream();
+		} else if (status.equals("All")) {
+			stream = orderRepository.findAll().stream();
+		} else {
+			Byte statusId = orderStatusRepository.getIdByName(status);
+			stream = orderRepository.findByStatusId(statusId).stream();
+		}
+		stream = stream.filter(e -> e.getId().toString().contains(orderId));
+		stream = stream.sorted(comparator);
+
+		return stream.toList();
 	}
 
 	public List<UserOrder> getUserOrders(Integer id) {
@@ -60,14 +90,14 @@ public class OrderService {
 		}
 		Order order = optional.get();
 
-		if (order.getStatus().equals("Processing") || order.getStatus().equals("Awaiting delivery")) {
+		if (order.getStatusName().equals("Processing") || order.getStatusName().equals("Awaiting delivery")) {
 			if (availableInShop(order)) {
 				reserveItems(order);
 				order.setStatus(orderStatusRepository.findByName("Awaiting in shop"));
 			} else {
 				order.setStatus(orderStatusRepository.findByName("Awaiting delivery"));
 			}
-		} else if (order.getStatus().equals("Awaiting in shop")) {
+		} else if (order.getStatusName().equals("Awaiting in shop")) {
 			order.setStatus(orderStatusRepository.findByName("Completed"));
 		}
 
@@ -83,8 +113,8 @@ public class OrderService {
 		Order order = optional.get();
 
 		if (type.equals("shop worker")) {
-			if (!order.getStatus().equals("User Cancelled")) {
-				System.out.println(order.getStatus());
+			if (!order.getStatusName().equals("User Cancelled")) {
+				System.out.println(order.getStatusName());
 				freeItems(order);
 			}
 			order.setStatus(orderStatusRepository.findByName("Cancelled"));
