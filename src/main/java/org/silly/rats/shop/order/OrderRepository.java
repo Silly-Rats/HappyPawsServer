@@ -8,7 +8,9 @@ import java.util.List;
 public interface OrderRepository
 	extends JpaRepository<Order, Integer> {
 	@Query("SELECT o FROM Order o WHERE o.status.id != ?1 AND o.status.id != ?2")
-	List<Order> findNotCompleted(Integer completed, Integer cancelled);
+	List<Order> findNotCompleted(Byte completed, Byte cancelled);
 
 	List<Order> findByUserId(Integer userId);
+
+	List<Order> findByStatusId(Byte status);
 }

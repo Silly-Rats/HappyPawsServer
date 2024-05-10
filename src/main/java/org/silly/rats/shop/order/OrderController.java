@@ -15,13 +15,17 @@ public class OrderController {
 	private final JwtService jwtService;
 
 	@GetMapping(path ="/not_completed")
-	public List<Order> getNotCompletedOrders(@RequestHeader("Authorization") String token)
+	public List<Order> getOrders(@RequestHeader("Authorization") String token,
+								 @RequestParam String orderId,
+								 @RequestParam String status,
+								 @RequestParam String sortBy,
+								 @RequestParam Boolean asc)
 			throws AuthenticationException {
 		if (!isShopWorker(token)) {
 			throw new AuthenticationException("User is not a shop worker");
 		}
 
-		return orderService.getNotCompletedOrders();
+		return orderService.getOrders(orderId, status, sortBy, asc);
 	}
 
 	@GetMapping(path = "/user")
@@ -65,7 +69,7 @@ public class OrderController {
 		return (String) jwtService.extractClaim(token, (c) -> c.get("type"));
 	}
 
-	private boolean isShopWorker(String token) {
-		return extractId(token).equals("shop worker");
+	private boolean isShopWorker(String token) {;
+		return extractType(token).equals("shop worker");
 	}
 }
