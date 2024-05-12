@@ -7,6 +7,7 @@ import org.silly.rats.shop.order.details.OrderDetailId;
 import org.silly.rats.shop.order.details.OrderDetailRepository;
 import org.silly.rats.shop.order.details.OrderItemDetails;
 import org.silly.rats.shop.order.details.OrderStatusRepository;
+import org.silly.rats.user.OrderUser;
 import org.silly.rats.user.User;
 import org.silly.rats.user.UserRepository;
 import org.springframework.stereotype.Service;
@@ -59,6 +60,12 @@ public class OrderService {
 		stream = stream.sorted(comparator);
 
 		return stream.toList();
+	}
+
+	public OrderUser getOrderUser(Integer id) {
+		Order order = orderRepository.findById(id).orElseThrow(() ->
+				new IllegalArgumentException("There is no order with id: " + id));
+		return new OrderUser(order.getUser());
 	}
 
 	public List<UserOrder> getUserOrders(Integer id) {
