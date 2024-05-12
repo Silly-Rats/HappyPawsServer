@@ -44,6 +44,11 @@ public class UserController {
 		return userService.getImage(id);
 	}
 
+	@GetMapping(path = "/image/{id}")
+	public String getImage(@PathVariable Integer id) {
+		return userService.getImage(id);
+	}
+
 	@PatchMapping
 	public void patchUser(@RequestHeader(name = "Authorization") String token,
 						  @RequestBody PatchUserRequest user) {
