@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.silly.rats.shop.order.details.OrderItemDetails;
 import org.silly.rats.shop.order.details.OrderStatus;
+import org.silly.rats.user.OrderUser;
 import org.silly.rats.user.User;
 
 import java.time.LocalDateTime;
@@ -33,6 +34,7 @@ public class Order {
 
 	@ManyToOne
 	@JoinColumn(name = "user_id")
+	@JsonIgnore
 	private User user;
 
 	@Column(name = "order_date")
@@ -44,6 +46,10 @@ public class Order {
 	@OneToMany(mappedBy = "id.order")
 	private List<OrderItemDetails> details = new ArrayList<>();
 
+	public OrderUser getUserInfo() {
+		return new OrderUser(user);
+	}
+
 	public String getStatusName() {
 		return status.getName();
 	}
@@ -53,6 +59,9 @@ public class Order {
 		for (OrderItemDetails detail : details) {
 			total += detail.getQty() * detail.getItem().getPrice();
 		}
+		total = total * 100;
+		total = Math.round(total);
+		total= total / 100;
 		return total;
 	}
 }

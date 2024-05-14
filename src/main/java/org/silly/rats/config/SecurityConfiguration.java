@@ -28,6 +28,7 @@ public class SecurityConfiguration {
 						.requestMatchers("api/auth/register",
 								"api/auth/authenticate",
 								"api/user/worker/*",
+								"api/user/image/*",
 								"api/dog/breeds",
 								"api/reserve/training/free/*",
 								"api/reserve/training/pass/*",

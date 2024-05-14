@@ -2,6 +2,7 @@ package org.silly.rats.shop.order;
 
 import lombok.RequiredArgsConstructor;
 import org.silly.rats.config.JwtService;
+import org.silly.rats.user.OrderUser;
 import org.springframework.web.bind.annotation.*;
 
 import javax.naming.AuthenticationException;
@@ -14,7 +15,7 @@ public class OrderController {
 	private final OrderService orderService;
 	private final JwtService jwtService;
 
-	@GetMapping(path ="/not_completed")
+	@GetMapping(path = "/all")
 	public List<Order> getOrders(@RequestHeader("Authorization") String token,
 								 @RequestParam String orderId,
 								 @RequestParam String status,
@@ -26,6 +27,17 @@ public class OrderController {
 		}
 
 		return orderService.getOrders(orderId, status, sortBy, asc);
+	}
+
+	@GetMapping(path = "/{id}/user")
+	public OrderUser getOrders(@RequestHeader("Authorization") String token,
+							   @PathVariable int id)
+			throws AuthenticationException {
+		if (!isShopWorker(token)) {
+			throw new AuthenticationException("User is not a shop worker");
+		}
+
+		return orderService.getOrderUser(id);
 	}
 
 	@GetMapping(path = "/user")
@@ -54,7 +66,7 @@ public class OrderController {
 
 	@PatchMapping(path = "/cancel")
 	public Order cancelOrder(@RequestHeader(name = "Authorization") String token,
-			@RequestBody Integer id) {
+							 @RequestBody Integer id) {
 		String type = extractType(token);
 		return orderService.cancelOrder(id, type);
 	}
@@ -69,7 +81,8 @@ public class OrderController {
 		return (String) jwtService.extractClaim(token, (c) -> c.get("type"));
 	}
 
-	private boolean isShopWorker(String token) {;
+	private boolean isShopWorker(String token) {
+		;
 		return extractType(token).equals("shop worker");
 	}
 }

@@ -7,6 +7,7 @@ import org.silly.rats.shop.order.details.OrderDetailId;
 import org.silly.rats.shop.order.details.OrderDetailRepository;
 import org.silly.rats.shop.order.details.OrderItemDetails;
 import org.silly.rats.shop.order.details.OrderStatusRepository;
+import org.silly.rats.user.OrderUser;
 import org.silly.rats.user.User;
 import org.silly.rats.user.UserRepository;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,7 @@ public class OrderService {
 		Comparator<Order> comparator = Comparator.comparing(Order::getId);
 		if (sortBy.equals("status")) {
 			comparator = Comparator.comparing(o -> o.getStatus().getId());
-		} else if(sortBy.equals("order date")) {
+		} else if (sortBy.equals("order date")) {
 			comparator = Comparator.comparing(Order::getOrderDate);
 		} else if (sortBy.equals("change date")) {
 			comparator = Comparator.comparing(Order::getChangeDate);
@@ -43,12 +44,14 @@ public class OrderService {
 		}
 
 		Stream<Order> stream;
-		if (status.equals("All")) {
+		if (status.equals("Not completed")) {
 			Byte completed = orderStatusRepository.getIdByName("Completed");
 			Byte cancelled = orderStatusRepository.getIdByName("Cancelled");
 			stream = orderRepository
 					.findNotCompleted(completed, cancelled)
 					.stream();
+		} else if (status.equals("All")) {
+			stream = orderRepository.findAll().stream();
 		} else {
 			Byte statusId = orderStatusRepository.getIdByName(status);
 			stream = orderRepository.findByStatusId(statusId).stream();
@@ -57,6 +60,12 @@ public class OrderService {
 		stream = stream.sorted(comparator);
 
 		return stream.toList();
+	}
+
+	public OrderUser getOrderUser(Integer id) {
+		Order order = orderRepository.findById(id).orElseThrow(() ->
+				new IllegalArgumentException("There is no order with id: " + id));
+		return new OrderUser(order.getUser());
 	}
 
 	public List<UserOrder> getUserOrders(Integer id) {
@@ -112,7 +121,6 @@ public class OrderService {
 
 		if (type.equals("shop worker")) {
 			if (!order.getStatusName().equals("User Cancelled")) {
-				System.out.println(order.getStatusName());
 				freeItems(order);
 			}
 			order.setStatus(orderStatusRepository.findByName("Cancelled"));
