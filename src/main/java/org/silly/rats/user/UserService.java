@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.silly.rats.user.type.AccountTypeRepository;
 import org.silly.rats.user.worker.WorkerInfo;
 import org.silly.rats.util.ImageUtil;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
 public class UserService {
 	private final UserRepository userRepository;
 	private final AccountTypeRepository accountTypeRepository;
+	private final PasswordEncoder passwordEncoder;
 
 	public List<WorkerInfo> getAllWorkersByType(String type) {
 		try {
@@ -54,11 +56,21 @@ public class UserService {
 		User user = userRepository.findById(id).orElseThrow(() ->
 				new IllegalArgumentException("User with id " + id + " not found"));
 
+		if (request.getNewPassword() != null) {
+			if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+				throw new IllegalArgumentException("Wrong password");
+			}
+			user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+		}
+
 		user.setFirstName(request.getFirstName());
 		user.setLastName(request.getLastName());
 		user.setDob(request.getDob());
-		user.setEmail(request.getEmail());
 		user.setPhoneNum(request.getPhoneNum());
 		userRepository.save(user);
+	}
+
+	public void deleteUser(Integer id) {
+		userRepository.deleteById(id);
 	}
 }
