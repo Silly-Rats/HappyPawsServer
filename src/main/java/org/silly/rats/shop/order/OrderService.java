@@ -28,20 +28,7 @@ public class OrderService {
 	private final ItemTypeRepository itemTypeRepository;
 
 	public List<Order> getOrders(String orderId, String status, String sortBy, Boolean asc) {
-		Comparator<Order> comparator = Comparator.comparing(Order::getId);
-		if (sortBy.equals("status")) {
-			comparator = Comparator.comparing(o -> o.getStatus().getId());
-		} else if (sortBy.equals("order date")) {
-			comparator = Comparator.comparing(Order::getOrderDate);
-		} else if (sortBy.equals("change date")) {
-			comparator = Comparator.comparing(Order::getChangeDate);
-		} else if (sortBy.equals("price")) {
-			comparator = Comparator.comparing(Order::getTotalPrice);
-		}
-
-		if (!asc) {
-			comparator = comparator.reversed();
-		}
+		Comparator<Order> comparator = orderComparator(sortBy, asc);
 
 		Stream<Order> stream;
 		if (status.equals("Not completed")) {
@@ -62,15 +49,48 @@ public class OrderService {
 		return stream.toList();
 	}
 
+	private Comparator<Order> orderComparator(String sortBy, Boolean asc) {
+		Comparator<Order> comparator = Comparator.comparing(Order::getId);
+
+		if (sortBy.equals("status")) {
+			comparator = Comparator.comparing(o -> o.getStatus().getId());
+		} else if (sortBy.equals("order date")) {
+			comparator = Comparator.comparing(Order::getOrderDate);
+		} else if (sortBy.equals("change date")) {
+			comparator = Comparator.comparing(Order::getChangeDate);
+		} else if (sortBy.equals("price")) {
+			comparator = Comparator.comparing(Order::getTotalPrice);
+		}
+
+		if (!asc) {
+			comparator = comparator.reversed();
+		}
+
+		return comparator;
+	}
+
 	public OrderUser getOrderUser(Integer id) {
 		Order order = orderRepository.findById(id).orElseThrow(() ->
 				new IllegalArgumentException("There is no order with id: " + id));
 		return new OrderUser(order.getUser());
 	}
 
-	public List<UserOrder> getUserOrders(Integer id) {
-		return orderRepository.findByUserId(id)
-				.stream()
+	public List<UserOrder> getUserOrders(Integer id, String status, String sortBy, Boolean asc) {
+		Comparator<Order> comparator = orderComparator(sortBy, asc);
+
+		Stream<Order> stream = orderRepository.findByUserId(id)
+				.stream();
+		if (status.equals("Not completed")) {
+			Byte completed = orderStatusRepository.getIdByName("Completed");
+			Byte cancelled = orderStatusRepository.getIdByName("Cancelled");
+			stream = stream.filter(o -> !o.getStatus().getId().equals(completed) &&
+					!o.getStatus().getId().equals(cancelled));
+		} else if (!status.equals("All")) {
+			Byte statusId = orderStatusRepository.getIdByName(status);
+			stream = stream.filter(o -> o.getStatus().getId().equals(statusId));
+		}
+
+		return stream.sorted(comparator)
 				.map(UserOrder::new)
 				.toList();
 	}

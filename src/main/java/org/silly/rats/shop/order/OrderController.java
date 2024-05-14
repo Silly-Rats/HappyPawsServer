@@ -16,11 +16,11 @@ public class OrderController {
 	private final JwtService jwtService;
 
 	@GetMapping(path = "/all")
-	public List<Order> getOrders(@RequestHeader("Authorization") String token,
-								 @RequestParam String orderId,
-								 @RequestParam String status,
-								 @RequestParam String sortBy,
-								 @RequestParam Boolean asc)
+	public List<Order> getOrderUser(@RequestHeader("Authorization") String token,
+									@RequestParam String orderId,
+									@RequestParam String status,
+									@RequestParam String sortBy,
+									@RequestParam Boolean asc)
 			throws AuthenticationException {
 		if (!isShopWorker(token)) {
 			throw new AuthenticationException("User is not a shop worker");
@@ -30,8 +30,8 @@ public class OrderController {
 	}
 
 	@GetMapping(path = "/{id}/user")
-	public OrderUser getOrders(@RequestHeader("Authorization") String token,
-							   @PathVariable int id)
+	public OrderUser getOrderUser(@RequestHeader("Authorization") String token,
+								  @PathVariable int id)
 			throws AuthenticationException {
 		if (!isShopWorker(token)) {
 			throw new AuthenticationException("User is not a shop worker");
@@ -41,9 +41,12 @@ public class OrderController {
 	}
 
 	@GetMapping(path = "/user")
-	public List<UserOrder> getUserItems(@RequestHeader(name = "Authorization") String token) {
+	public List<UserOrder> getUserItems(@RequestHeader(name = "Authorization") String token,
+										@RequestParam String status,
+										@RequestParam String sortBy,
+										@RequestParam Boolean asc) {
 		Integer id = extractId(token);
-		return orderService.getUserOrders(id);
+		return orderService.getUserOrders(id, status, sortBy, asc);
 	}
 
 	@PostMapping(path = "/user")
@@ -82,7 +85,6 @@ public class OrderController {
 	}
 
 	private boolean isShopWorker(String token) {
-		;
 		return extractType(token).equals("shop worker");
 	}
 }

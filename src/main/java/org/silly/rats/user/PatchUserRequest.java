@@ -15,6 +15,7 @@ public class PatchUserRequest {
 	private String firstName;
 	private String lastName;
 	private LocalDate dob;
-	private String email;
 	private String phoneNum;
+	private String newPassword;
+	private String oldPassword;
 }
