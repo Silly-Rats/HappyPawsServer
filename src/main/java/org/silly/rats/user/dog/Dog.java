@@ -13,7 +13,6 @@ import org.silly.rats.user.dog.breed.Breed;
 import org.silly.rats.user.dog.breed.OtherBreed;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -35,7 +34,7 @@ public class Dog {
 	@JoinColumn(name = "breed")
 	private Breed breed;
 
-	@OneToOne
+	@OneToOne(cascade = CascadeType.REMOVE)
 	@JoinColumn(name = "dog_id")
 	@JsonIgnore
 	private OtherBreed otherBreed;
@@ -46,7 +45,7 @@ public class Dog {
 	@JsonBackReference
 	private User user;
 
-	@OneToMany(mappedBy = "dog")
+	@OneToMany(mappedBy = "dog", cascade = CascadeType.REMOVE)
 	@JsonBackReference
 	private List<Reserve> reserves;
 

@@ -82,7 +82,6 @@ public class OrderController {
 	}
 
 	private boolean isShopWorker(String token) {
-		;
 		return extractType(token).equals("shop worker");
 	}
 }

@@ -56,6 +56,12 @@ public class UserController {
 		userService.patchUser(user, id);
 	}
 
+	@DeleteMapping
+	public void deleteUser(@RequestHeader(name = "Authorization") String token) {
+		Integer id = extractId(token);
+		userService.deleteUser(id);
+	}
+
 	private Integer extractId(String token) {
 		token = token.substring(7);
 		return (Integer) jwtService.extractClaim(token, (c) -> c.get("id"));

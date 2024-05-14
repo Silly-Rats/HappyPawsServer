@@ -18,9 +18,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -51,7 +49,7 @@ public class User
 	@JoinColumn(name = "type")
 	private AccountType type;
 
-	@OneToOne
+	@OneToOne(cascade = CascadeType.REMOVE)
 	@JoinColumn(name = "user_id")
 	private Worker workerDetails;
 
@@ -63,11 +61,11 @@ public class User
 	@JsonIgnore
 	private LocalDate modifyDate = LocalDate.now();
 
-	@OneToMany(mappedBy = "user")
+	@OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
 	@JsonIgnore
 	private List<Dog> dogs;
 
-	@OneToMany(mappedBy = "worker")
+	@OneToMany(mappedBy = "worker", cascade = CascadeType.REMOVE)
 	@JsonIgnore
 	private List<TrainingDetails> trainings;
 
@@ -75,7 +73,7 @@ public class User
 	@JsonIgnore
 	private List<GroomingDetails> groomingDetails;
 
-	@OneToMany(mappedBy = "user")
+	@OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
 	@JsonIgnore
 	private List<Order> orders;
 
