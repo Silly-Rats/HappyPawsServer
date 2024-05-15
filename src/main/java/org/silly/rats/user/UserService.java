@@ -7,6 +7,7 @@ import org.silly.rats.util.ImageUtil;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.naming.AuthenticationException;
 import java.util.List;
 
 @Service
@@ -38,7 +39,7 @@ public class UserService {
 		}
 
 		String savedImage = ImageUtil.saveImage(image, "img/user", id.toString());
-		user.setImageName(id + ".jpg");
+		user.setImageName(id + ".png");
 		userRepository.save(user);
 		return savedImage;
 	}
@@ -70,7 +71,14 @@ public class UserService {
 		userRepository.save(user);
 	}
 
-	public void deleteUser(Integer id) {
-		userRepository.deleteById(id);
+	public void deleteUser(Integer id, String pass)
+			throws AuthenticationException {
+		User user = userRepository.findById(id).orElseThrow(() ->
+				new IllegalArgumentException("There is no user with id: " + id));
+		if (passwordEncoder.matches(pass, user.getPassword())) {
+			userRepository.deleteById(id);
+		} else {
+			throw new AuthenticationException("Wrong password");
+		}
 	}
 }

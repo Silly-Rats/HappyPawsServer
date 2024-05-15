@@ -12,6 +12,7 @@ public class UserOrder {
 	private String status;
 	private LocalDateTime orderDate;
 	private LocalDateTime changeDate;
+	private Double totalPrice;
 	private List<OrderItemDetails> details;
 
 	public UserOrder(Order order) {
@@ -19,6 +20,7 @@ public class UserOrder {
 		this.status = order.getStatusName();
 		this.orderDate = order.getOrderDate();
 		this.changeDate = order.getChangeDate();
+		this.totalPrice = order.getTotalPrice();
 		this.details = order.getDetails();
 	}
 }

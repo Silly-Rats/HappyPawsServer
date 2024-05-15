@@ -1,6 +1,5 @@
 package org.silly.rats.reserve.training;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,7 +25,6 @@ public class TrainingDetails {
 
 	@ManyToOne
 	@JoinColumn(name = "pass")
-	@JsonBackReference
 	private Pass pass;
 
 	@ManyToOne
