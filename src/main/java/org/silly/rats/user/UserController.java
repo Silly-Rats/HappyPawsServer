@@ -5,6 +5,7 @@ import org.silly.rats.config.JwtService;
 import org.silly.rats.user.worker.WorkerInfo;
 import org.springframework.web.bind.annotation.*;
 
+import javax.naming.AuthenticationException;
 import java.util.List;
 
 @RestController
@@ -57,9 +58,11 @@ public class UserController {
 	}
 
 	@DeleteMapping
-	public void deleteUser(@RequestHeader(name = "Authorization") String token) {
+	public void deleteUser(@RequestHeader(name = "Authorization") String token,
+						   @RequestParam String pass)
+			throws AuthenticationException {
 		Integer id = extractId(token);
-		userService.deleteUser(id);
+		userService.deleteUser(id, pass);
 	}
 
 	private Integer extractId(String token) {
