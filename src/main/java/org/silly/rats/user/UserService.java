@@ -39,7 +39,7 @@ public class UserService {
 		}
 
 		String savedImage = ImageUtil.saveImage(image, "img/user", id.toString());
-		user.setImageName(id + ".jpg");
+		user.setImageName(id + ".png");
 		userRepository.save(user);
 		return savedImage;
 	}
