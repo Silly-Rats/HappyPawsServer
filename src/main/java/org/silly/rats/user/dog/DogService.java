@@ -32,6 +32,7 @@ public class DogService {
 			throw new AuthenticationException("User " + id + " don't have a dog with id: " + dogId);
 		}
 
+		otherBreedRepository.deleteById(dogId);
 		dogRepository.deleteById(dogId);
 	}
 
@@ -48,7 +49,7 @@ public class DogService {
 			throws AuthenticationException {
 		User user = userRepository.findById(id).orElseThrow(() ->
 				new RuntimeException("There is no user with id: " + id));
-		if (request.getId() != null && containDog(user, request.getId())) {
+		if (request.getId() != null && !containDog(user, request.getId())) {
 			throw new AuthenticationException("User " + id + " don't have a dog with id: " + request.getId());
 		}
 

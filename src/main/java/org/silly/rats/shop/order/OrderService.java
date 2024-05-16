@@ -83,8 +83,10 @@ public class OrderService {
 		if (status.equals("Not completed")) {
 			Byte completed = orderStatusRepository.getIdByName("Completed");
 			Byte cancelled = orderStatusRepository.getIdByName("Cancelled");
+			Byte userCancelled = orderStatusRepository.getIdByName("User cancelled");
 			stream = stream.filter(o -> !o.getStatus().getId().equals(completed) &&
-					!o.getStatus().getId().equals(cancelled));
+					!o.getStatus().getId().equals(cancelled) &&
+					!o.getStatus().getId().equals(userCancelled));
 		} else if (!status.equals("All")) {
 			Byte statusId = orderStatusRepository.getIdByName(status);
 			stream = stream.filter(o -> o.getStatus().getId().equals(statusId));

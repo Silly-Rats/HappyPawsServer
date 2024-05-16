@@ -168,7 +168,7 @@ public class ReserveService {
 		List<Dog> dogs = dogRepository.getDogByUserId(userId);
 		Dog dog = getDogFromList(dogs, dogId);
 		if (dog == null) {
-			throw new AuthenticationException("User don't have this dog: id =" + dogId);
+			throw new AuthenticationException("User id don't dog with id: " + dogId);
 		}
 		return dog;
 	}
