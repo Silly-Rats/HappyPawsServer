@@ -8,8 +8,8 @@ import org.silly.rats.shop.item.details.ItemType;
 
 import java.util.*;
 
-public class findFilteredItemsImpl
-	implements findFilteredItems {
+public class FindFilteredItemsImpl
+	implements FindFilteredItems {
 	@PersistenceContext
 	private EntityManager entityManager;
 
