@@ -8,7 +8,7 @@ import java.util.List;
 
 @Repository
 public interface ItemRepository
-	extends JpaRepository<Item, Integer>, findFilteredItems {
+	extends JpaRepository<Item, Integer>, FindFilteredItems {
 	@Query("SELECT i.id FROM Item i")
 	List<Integer> getAllIds();
 }

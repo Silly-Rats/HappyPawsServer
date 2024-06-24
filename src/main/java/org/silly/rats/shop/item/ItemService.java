@@ -30,6 +30,12 @@ public class ItemService {
 
 	public PageWrapper<CategoryItem> getFilteredCategoryItems(Integer categoryId, Integer page,
 															  Integer size, FilterRequest filers) {
+		if (filers.getFrom() == null) {
+			filers.setFrom(0.0);
+		}
+		if (filers.getTo() == null) {
+			filers.setTo(1000.0);
+		}
 		return itemRepository.findFilteredCategoryItems(categoryId, page, size, filers);
 	}
 

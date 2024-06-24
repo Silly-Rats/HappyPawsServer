@@ -8,8 +8,8 @@ import org.silly.rats.shop.item.details.ItemType;
 
 import java.util.*;
 
-public class findFilteredItemsImpl
-	implements findFilteredItems {
+public class FindFilteredItemsImpl
+	implements FindFilteredItems {
 	@PersistenceContext
 	private EntityManager entityManager;
 
@@ -27,13 +27,6 @@ public class findFilteredItemsImpl
 		query.registerStoredProcedureParameter(8, String.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(9, Integer.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(10, Boolean.class, ParameterMode.OUT);
-
-		if (filter.getFrom() == null) {
-			filter.setFrom(0.0);
-		}
-		if (filter.getTo() == null) {
-			filter.setTo(Double.MAX_VALUE);
-		}
 
 		query.setParameter(1, category);
 		query.setParameter(2, page);
