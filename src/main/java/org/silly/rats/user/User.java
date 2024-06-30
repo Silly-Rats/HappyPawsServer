@@ -122,6 +122,7 @@ public class User
 
 	@JsonIgnore
 	public String getImage() {
-		return ImageUtil.loadImage("img/user", imageName);
+		return imageName != null ?
+				ImageUtil.loadImage("img/user", imageName) : null;
 	}
 }

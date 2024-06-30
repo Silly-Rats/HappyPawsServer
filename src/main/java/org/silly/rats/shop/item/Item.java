@@ -69,7 +69,7 @@ public class Item {
 		return types.stream()
 				.filter(type -> type.getQty() > 0)
 				.mapToDouble(ItemType::getPrice)
-				.min().orElse(0.0);
+				.min().orElse(types.isEmpty() ? 0 : types.get(0).getPrice());
 	}
 
 	public boolean isNameContains(String part) {

@@ -16,16 +16,12 @@ public class ItemController {
 	private final ItemService itemService;
 	private final JwtService jwtService;
 
-	@GetMapping(path = "/{categoryId}/items")
-	public ListWrapper getItemsByCategory(@PathVariable Integer categoryId,
-										  @RequestParam Integer start,
-										  @RequestParam Integer limit) {
-		return itemService.getCategoryItem(categoryId, start, limit);
-	}
-
-	@PostMapping(path = "/filters")
-	public void setFilters(@RequestBody FilterRequest filters) {
-		itemService.setFilters(filters);
+	@PostMapping(path = "/{categoryId}/items")
+	public PageWrapper<CategoryItem> getItemsByCategory(@PathVariable Integer categoryId,
+										  @RequestParam Integer page,
+										  @RequestParam Integer size,
+										  @RequestBody FilterRequest filterRequest) {
+		return itemService.getFilteredCategoryItems(categoryId, page, size, filterRequest);
 	}
 
 	@GetMapping(path = "/all/id")
@@ -34,7 +30,7 @@ public class ItemController {
 	}
 
 	@GetMapping(path = "/{id}/info")
-	public Item getItem(@PathVariable Integer id) {
+	public Item getItemDetails(@PathVariable Integer id) {
 		return itemService.getItem(id);
 	}
 

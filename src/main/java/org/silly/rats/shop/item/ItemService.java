@@ -18,58 +18,6 @@ public class ItemService {
 	private final ItemRepository itemRepository;
 	private final ItemImageRepository itemImageRepository;
 	private final ItemTypeRepository itemTypeRepository;
-	private Integer currentCategory;
-	private Map<Integer, List<Integer>> attributeFilters = new HashMap<>();
-	private List<Item> items = new ArrayList<>();
-	private List<Item> filtered;
-	private Comparator<Item> comparator = Comparator.comparingInt(Item::getId);
-	private Double from;
-	private Double to;
-	private String namePart = "";
-
-	public void setFilters(FilterRequest request) {
-		this.attributeFilters = request.getAttributes();
-		this.from = request.getFrom();
-		this.to = request.getTo();
-		this.namePart = request.getNamePart();
-
-		if (request.getSortBy().equals("price")) {
-			comparator = Comparator.comparingDouble(Item::getPrice);
-		} else if (request.getSortBy().equals("name")) {
-			comparator = Comparator.comparing(Item::getName);
-		} else {
-			comparator = Comparator.comparingInt(Item::getId);
-		}
-
-		if (!request.isAsc()) {
-			comparator = comparator.reversed();
-		}
-
-		filter();
-	}
-
-	private void filter() {
-		filtered = items.stream()
-				.filter(item -> item.isPriceInRange(from, to))
-				.filter(item -> item.isNameContains(namePart))
-				.filter(item -> {
-					for (List<Integer> attributeFilter : attributeFilters.values()) {
-						if (attributeFilter.isEmpty()) {
-							return true;
-						}
-						boolean contains = false;
-						for (Integer values : attributeFilter) {
-							contains = contains || containsValue(item.getAttributes(), values);
-						}
-						if (!contains) {
-							return false;
-						}
-					}
-					return true;
-				})
-				.sorted(comparator)
-				.toList();
-	}
 
 	public boolean containsValue(List<ItemAttribute> attributes, Integer value) {
 		for (ItemAttribute itemAttribute : attributes) {
@@ -80,19 +28,15 @@ public class ItemService {
 		return false;
 	}
 
-	public ListWrapper getCategoryItem(Integer categoryId, Integer start, Integer limit) {
-		if (currentCategory == null || !currentCategory.equals(categoryId)) {
-			items = itemRepository.findByCategoryId(categoryId);
-			currentCategory = categoryId;
-			filter();
+	public PageWrapper<CategoryItem> getFilteredCategoryItems(Integer categoryId, Integer page,
+															  Integer size, FilterRequest filers) {
+		if (filers.getFrom() == null) {
+			filers.setFrom(0.0);
 		}
-
-		if (filtered.size() < start) {
-			return new ListWrapper(new ArrayList<>(), false);
+		if (filers.getTo() == null) {
+			filers.setTo(1000.0);
 		}
-
-		return new ListWrapper(filtered.subList(start, Math.min(start + limit, filtered.size())),
-				filtered.size() > start + limit);
+		return itemRepository.findFilteredCategoryItems(categoryId, page, size, filers);
 	}
 
 	public Item getItem(Integer id) {
