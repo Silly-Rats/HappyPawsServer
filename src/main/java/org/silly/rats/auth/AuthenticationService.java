@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.silly.rats.config.JwtService;
 import org.silly.rats.user.User;
 import org.silly.rats.user.UserRepository;
-import org.silly.rats.user.worker.Worker;
 import org.silly.rats.user.type.AccountType;
 import org.silly.rats.user.type.AccountTypeRepository;
+import org.silly.rats.user.worker.Worker;
 import org.silly.rats.user.worker.WorkerRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -16,7 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor

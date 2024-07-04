@@ -2,9 +2,9 @@ spring:
   application:
     name: HappyPaws
   datasource:
-    url: jdbc:mysql://localhost:3306/happy_paws
-    username: spring_server
-    password: server_pass
+    url: jdbc:mysql://kcpgm0ka8vudfq76.chr7pe7iynqr.eu-west-1.rds.amazonaws.com:3306/paej8obdvj21mywz
+    username: k6eriaa4w5h85s4k
+    password: d7ar510t4irgaz8q
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     properties:

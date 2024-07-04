@@ -1,14 +1,13 @@
 package org.silly.rats.shop.item.details;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.silly.rats.shop.attribute.value.AttributeValue;
-import org.silly.rats.shop.item.Item;
 
 @Data
 @NoArgsConstructor

@@ -1,7 +1,6 @@
 package org.silly.rats.reserve.request;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
