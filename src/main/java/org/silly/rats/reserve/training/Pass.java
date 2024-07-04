@@ -10,10 +10,8 @@ import org.silly.rats.user.User;
 import org.silly.rats.user.dog.Dog;
 import org.silly.rats.user.worker.WorkerInfo;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Data
 @Builder
