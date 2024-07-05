@@ -14,8 +14,7 @@ public class FindFilteredItemsImpl
 	private EntityManager entityManager;
 
 	@Override
-	public PageWrapper<CategoryItem> findFilteredCategoryItems(Integer category, Integer page,
-															   Integer size, FilterRequest filter) {
+	public PageWrapper<CategoryItem> findFilteredCategoryItems(Integer category, FilterRequest filter) {
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("FIND_FILTERED_CATEGORY_ITEMS");
 		query.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(2, Integer.class, ParameterMode.IN);
@@ -29,8 +28,8 @@ public class FindFilteredItemsImpl
 		query.registerStoredProcedureParameter(10, Boolean.class, ParameterMode.OUT);
 
 		query.setParameter(1, category);
-		query.setParameter(2, page);
-		query.setParameter(3, size);
+		query.setParameter(2, filter.getPage());
+		query.setParameter(3, filter.getSize());
 		query.setParameter(4, filter.getFrom());
 		query.setParameter(5, filter.getTo());
 		query.setParameter(6, filter.getNamePart());

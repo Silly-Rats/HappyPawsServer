@@ -13,6 +13,8 @@ import java.util.Map;
 @AllArgsConstructor
 @Builder
 public class FilterRequest {
+	private int page;
+	private int size;
 	private Map<Integer, List<Integer>> attributes;
 	private Double from;
 	private Double to;
