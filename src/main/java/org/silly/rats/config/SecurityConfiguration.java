@@ -60,7 +60,7 @@ public class SecurityConfiguration {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/api/**")
-						.allowedOrigins("https://happypaws.fly.dev")
+						.allowedOrigins("https://happypaws-87hv.onrender.com")
 						.allowedMethods("*")
 						.allowedHeaders("*")
 						.allowCredentials(true);
