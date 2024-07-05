@@ -11,7 +11,7 @@ public class ScheduledPing {
 	@Scheduled(fixedDelay = 60000)
 	public void ping() {
 		RestTemplate restTemplate = new RestTemplate();
-		String url = "http://localhost:8080/api/ping";
-		restTemplate.getForEntity(url, String.class);
+		restTemplate.getForEntity("https://happypawsserver.fly.dev/api/ping", String.class);
+		restTemplate.getForObject("https://happypaws.fly.dev/ping", String.class);
 	}
 }

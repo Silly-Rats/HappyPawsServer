@@ -3,6 +3,7 @@ package org.silly.rats.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -25,26 +26,25 @@ public class SecurityConfiguration {
 			throws Exception {
 		http.csrf(AbstractHttpConfigurer::disable)
 				.authorizeHttpRequests((auth) -> auth
-						.requestMatchers("api/ping",
-								"api/auth/register",
-								"api/auth/authenticate",
+						.requestMatchers(HttpMethod.GET, "api/ping",
 								"api/user/worker/*",
-								"api/user/image/*",
 								"api/dog/breeds",
 								"api/reserve/training/free/*",
 								"api/reserve/training/pass/*",
-								"api/reserve/training",
 								"api/category/*/info",
 								"api/category/info",
 								"api/category/*/attr",
 								"api/category/*/img",
-								"api/item/filters",
 								"api/item/*/info",
-								"api/item/*/items",
 								"api/item/*/images",
 								"api/item/*/image",
 								"api/item/type/*/info",
 								"api/item/all/id")
+						.permitAll()
+						.requestMatchers(HttpMethod.POST, "api/auth/register",
+								"api/auth/authenticate",
+								"api/reserve/training",
+								"api/item/*/items")
 						.permitAll()
 						.anyRequest().authenticated())
 				.sessionManagement(session -> session
@@ -60,7 +60,7 @@ public class SecurityConfiguration {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/api/**")
-						.allowedOrigins("https://happypaws.fly.dev/")
+						.allowedOrigins("https://happypaws.fly.dev")
 						.allowedMethods("*")
 						.allowedHeaders("*")
 						.allowCredentials(true);
