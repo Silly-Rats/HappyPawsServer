@@ -28,15 +28,14 @@ public class ItemService {
 		return false;
 	}
 
-	public PageWrapper<CategoryItem> getFilteredCategoryItems(Integer categoryId, Integer page,
-															  Integer size, FilterRequest filers) {
-		if (filers.getFrom() == null) {
-			filers.setFrom(0.0);
+	public PageWrapper<CategoryItem> getFilteredCategoryItems(Integer categoryId, FilterRequest filters) {
+		if (filters.getFrom() == null) {
+			filters.setFrom(0.0);
 		}
-		if (filers.getTo() == null) {
-			filers.setTo(1000.0);
+		if (filters.getTo() == null) {
+			filters.setTo(1000.0);
 		}
-		return itemRepository.findFilteredCategoryItems(categoryId, page, size, filers);
+		return itemRepository.findFilteredCategoryItems(categoryId, filters);
 	}
 
 	public Item getItem(Integer id) {

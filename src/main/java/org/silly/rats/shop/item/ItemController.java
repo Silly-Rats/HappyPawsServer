@@ -18,10 +18,8 @@ public class ItemController {
 
 	@PostMapping(path = "/{categoryId}/items")
 	public PageWrapper<CategoryItem> getItemsByCategory(@PathVariable Integer categoryId,
-										  @RequestParam Integer page,
-										  @RequestParam Integer size,
-										  @RequestBody FilterRequest filterRequest) {
-		return itemService.getFilteredCategoryItems(categoryId, page, size, filterRequest);
+														@RequestBody FilterRequest filterRequest) {
+		return itemService.getFilteredCategoryItems(categoryId, filterRequest);
 	}
 
 	@GetMapping(path = "/all/id")
@@ -51,8 +49,8 @@ public class ItemController {
 
 	@PatchMapping(path = "/{id}/images/add")
 	public void addItemImages(@RequestHeader(name = "Authorization") String token,
-											   @PathVariable Integer id,
-											   @RequestBody List<String> images)
+							  @PathVariable Integer id,
+							  @RequestBody List<String> images)
 			throws AuthenticationException {
 		token = token.substring(7);
 		if (!jwtService.extractClaim(token, (c) -> c.get("type")).equals("shop worker")) {
@@ -64,8 +62,8 @@ public class ItemController {
 
 	@PatchMapping(path = "/{id}/images/delete")
 	public void deleteItemImage(@RequestHeader(name = "Authorization") String token,
-							  @PathVariable Integer id,
-							  @RequestBody String imageName)
+								@PathVariable Integer id,
+								@RequestBody String imageName)
 			throws AuthenticationException {
 		token = token.substring(7);
 		if (!jwtService.extractClaim(token, (c) -> c.get("type")).equals("shop worker")) {
